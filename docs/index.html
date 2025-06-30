@@ -20,12 +20,34 @@
             text-align: center;
             color: white;
             padding: 10px;
+            position: relative;
         }
         
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .github-link {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .github-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         
         .header p {
@@ -260,6 +282,9 @@
 <body>
     <div class="header">
         <h1>🚀 abbychau/mysql-parser demo</h1>
+        <a href="https://github.com/abbychau/mysql-parser" target="_blank" class="github-link">
+            ⭐ GitHub
+        </a>
     </div>
     
     <div class="main-container">
