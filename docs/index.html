@@ -1,58 +1,515 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>MySQL Parser WASM Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL Parser - Interactive Demo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .container { margin-bottom: 20px; }
-        textarea { width: 100%; height: 100px; margin-bottom: 10px; font-family: monospace; }
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
-        .result { background: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 15px; white-space: pre-wrap; font-family: monospace; }
-        .error { background: #ffe6e6; border: 1px solid #ff0000; }
-        .success { background: #e6ffe6; border: 1px solid #00aa00; }
-        h1 { color: #333; }
-        .example { color: #666; font-style: italic; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            padding: 10px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+            max-width: 1600px;
+            margin: 0 auto;
+            gap: 0;
+        }
+        
+        .sidebar {
+            width: 400px;
+            background: white;
+            border-radius: 12px 0 0 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .main-panel {
+            flex: 1;
+            background: white;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        
+        .sidebar h2 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        
+        .sidebar p {
+            color: #718096;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .example-item {
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .example-item:hover {
+            background: #e2e8f0;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .example-item.active {
+            background: #e6fffa;
+            border-color: #38b2ac;
+        }
+        
+        .example-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        .example-description {
+            font-size: 0.8em;
+            color: #718096;
+            line-height: 1.4;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        
+        .status.loading {
+            background: #fef5e7;
+            color: #c05621;
+        }
+        
+        .status.ready {
+            background: #f0fff4;
+            color: #2f855a;
+        }
+        
+        .status.error {
+            background: #fff5f5;
+            color: #c53030;
+        }
+        
+        .input-section {
+            margin-bottom: 20px;
+        }
+        
+        .input-section h3 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .code-editor {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #2d3748;
+        }
+        
+        .code-editor textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: none;
+            background: #2d3748;
+            color: #e2e8f0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+        }
+        
+        .code-editor:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .btn-secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            white-space: pre-wrap;
+            border-left: 4px solid #e2e8f0;
+            min-height: 100px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .result.success {
+            background: #f0fff4;
+            border-left-color: #48bb78;
+            color: #2d3748;
+        }
+        
+        .result.error {
+            background: #fff5f5;
+            border-left-color: #f56565;
+            color: #c53030;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                margin: 20px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 12px 12px 0 0;
+                max-height: 300px;
+            }
+            
+            .main-panel {
+                border-radius: 0 0 12px 12px;
+                min-height: 500px;
+            }
+        }
+        
+        /* Prism overrides for better integration */
+        .token.keyword { color: #c678dd; }
+        .token.string { color: #98c379; }
+        .token.number { color: #d19a66; }
+        .token.operator { color: #56b6c2; }
+        .token.punctuation { color: #abb2bf; }
     </style>
 </head>
 <body>
-    <h1>MySQL Parser WASM Demo</h1>
-    
-    <div class="container">
-        <h3>Enter SQL Statement:</h3>
-        <textarea id="sqlInput" placeholder="SELECT name, age FROM users WHERE age > 25">SELECT name, age FROM users WHERE age > 25</textarea>
-        <button onclick="parseSQLButton()">Parse SQL</button>
+    <div class="header">
+        <h1>🚀 abbychau/mysql-parser demo</h1>
     </div>
     
-    <div class="container">
-        <h3>Result:</h3>
-        <div id="result" class="result">Ready to parse SQL...</div>
-    </div>
+    <div class="main-container">
+        <div class="sidebar">
+            <h2>📝 Complex SQL Examples</h2>
+            <p>Click any example below to automatically load and parse it:</p>
+            
+            <div class="example-item" onclick="loadExample(this, 'multi-join')">
+                <div class="example-title">🔗 Multi-Table JOIN</div>
+                <div class="example-description">Join 5 tables with filtering and aliasing</div>
+                <div class="example-sql" style="display: none;">SELECT u.name, u.email, o.total, p.name as product_name, c.name as category
+FROM users u 
+JOIN orders o ON u.id = o.user_id 
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+JOIN categories c ON p.category_id = c.id
+WHERE o.total > 500 AND c.name = 'Electronics'</div>
+            </div>
 
-    <div class="container">
-        <h3>Examples to try:</h3>
-        <div class="example">
-            • SELECT a, b FROM t<br>
-            • SELECT user.name, profile.email FROM users user JOIN profiles profile ON user.id = profile.user_id<br>
-            • INSERT INTO table1 (col1, col2) VALUES (1, 'test')<br>
-            • UPDATE table1 SET col1 = 5 WHERE col2 = 'value'<br>
+            <div class="example-item" onclick="loadExample(this, 'aggregation')">
+                <div class="example-title">📈 Complex Aggregation</div>
+                <div class="example-description">Advanced GROUP BY with multiple aggregations</div>
+                <div class="example-sql" style="display: none;">SELECT 
+    department,
+    COUNT(*) as employee_count,
+    AVG(salary) as avg_salary,
+    MAX(hire_date) as latest_hire,
+    SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_count
+FROM employees e
+LEFT JOIN departments d ON e.dept_id = d.id
+WHERE hire_date >= '2020-01-01'
+GROUP BY department, d.location
+HAVING COUNT(*) > 5 AND AVG(salary) > 50000
+ORDER BY avg_salary DESC, employee_count DESC</div>
+            </div>
+
+            <div class="example-item" onclick="loadExample(this, 'window-functions')">
+                <div class="example-title">🔄 Window Functions</div>
+                <div class="example-description">ROW_NUMBER, LAG with subqueries</div>
+                <div class="example-sql" style="display: none;">SELECT 
+    customer_id,
+    order_date,
+    total,
+    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) as order_rank,
+    LAG(total) OVER (PARTITION BY customer_id ORDER BY order_date) as prev_total,
+    running_total
+FROM (
+    SELECT 
+        customer_id,
+        order_date,
+        total,
+        SUM(total) OVER (PARTITION BY customer_id ORDER BY order_date) as running_total
+    FROM orders
+    WHERE order_date >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+) ranked_orders
+WHERE order_rank <= 10</div>
+            </div>
+
+            <div class="example-item" onclick="loadExample(this, 'ddl')">
+                <div class="example-title">🏗️ DDL with Constraints</div>
+                <div class="example-description">CREATE TABLE with complex constraints</div>
+                <div class="example-sql" style="display: none;">CREATE TABLE user_profiles (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    birth_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    profile_data JSON,
+    status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_email (email),
+    INDEX idx_status_created (status, created_at)
+)</div>
+            </div>
+
+            <div class="example-item" onclick="loadExample(this, 'cte-recursive')">
+                <div class="example-title">🔍 Recursive CTE</div>
+                <div class="example-description">Employee hierarchy with path tracking</div>
+                <div class="example-sql" style="display: none;">WITH RECURSIVE employee_hierarchy AS (
+    -- Base case: top-level managers
+    SELECT 
+        emp_id,
+        name,
+        manager_id,
+        department,
+        salary,
+        1 as level,
+        CAST(name AS CHAR(500)) as path
+    FROM employees 
+    WHERE manager_id IS NULL
+    
+    UNION ALL
+    
+    -- Recursive case: subordinates
+    SELECT 
+        e.emp_id,
+        e.name,
+        e.manager_id,
+        e.department,
+        e.salary,
+        eh.level + 1,
+        CONCAT(eh.path, ' -> ', e.name)
+    FROM employees e
+    JOIN employee_hierarchy eh ON e.manager_id = eh.emp_id
+    WHERE eh.level < 5
+)
+SELECT emp_id, name, department, salary, level, path
+FROM employee_hierarchy
+ORDER BY level, department, name</div>
+            </div>
+
+            <div class="example-item" onclick="loadExample(this, 'analytics')">
+                <div class="example-title">📊 Advanced Analytics</div>
+                <div class="example-description">RANK, PERCENT_RANK with complex expressions</div>
+                <div class="example-sql" style="display: none;">SELECT 
+    product_category,
+    month_year,
+    total_sales,
+    total_quantity,
+    avg_price,
+    RANK() OVER (PARTITION BY month_year ORDER BY total_sales DESC) as sales_rank,
+    PERCENT_RANK() OVER (PARTITION BY product_category ORDER BY total_sales) as percentile_rank,
+    total_sales - LAG(total_sales) OVER (PARTITION BY product_category ORDER BY month_year) as mom_growth,
+    CASE 
+        WHEN total_sales > AVG(total_sales) OVER (PARTITION BY product_category) THEN 'Above Average'
+        ELSE 'Below Average'
+    END as performance
+FROM (
+    SELECT 
+        c.name as product_category,
+        DATE_FORMAT(o.order_date, '%Y-%m') as month_year,
+        SUM(oi.quantity * oi.price) as total_sales,
+        SUM(oi.quantity) as total_quantity,
+        AVG(oi.price) as avg_price
+    FROM order_items oi
+    JOIN products p ON oi.product_id = p.id
+    JOIN categories c ON p.category_id = c.id
+    JOIN orders o ON oi.order_id = o.id
+    WHERE o.order_date >= DATE_SUB(NOW(), INTERVAL 2 YEAR)
+    GROUP BY c.name, DATE_FORMAT(o.order_date, '%Y-%m')
+) monthly_stats
+ORDER BY product_category, month_year</div>
+            </div>
+
+            <div class="example-item" onclick="loadExample(this, 'insert-select')">
+                <div class="example-title">💾 INSERT with SELECT</div>
+                <div class="example-description">Complex data insertion with JSON functions</div>
+                <div class="example-sql" style="display: none;">INSERT INTO user_activity_log (
+    user_id,
+    activity_type,
+    activity_data,
+    ip_address,
+    user_agent,
+    created_at
+)
+SELECT 
+    u.id as user_id,
+    'bulk_update' as activity_type,
+    JSON_OBJECT(
+        'updated_fields', JSON_ARRAY('email', 'last_login'),
+        'old_email', u.email,
+        'new_email', CONCAT('updated_', u.id, '@example.com')
+    ) as activity_data,
+    '192.168.1.1' as ip_address,
+    'System Migration Tool' as user_agent,
+    NOW() as created_at
+FROM users u
+WHERE u.last_login < DATE_SUB(NOW(), INTERVAL 6 MONTH)
+  AND u.status = 'active'
+  AND u.email NOT LIKE 'updated_%'</div>
+            </div>
+
+            <div class="example-item" onclick="loadExample(this, 'complex-update')">
+                <div class="example-title">🔄 Complex UPDATE</div>
+                <div class="example-description">UPDATE with JOIN and conditional logic</div>
+                <div class="example-sql" style="display: none;">UPDATE products p
+JOIN (
+    SELECT 
+        product_id,
+        AVG(rating) as avg_rating,
+        COUNT(*) as review_count,
+        SUM(CASE WHEN rating >= 4 THEN 1 ELSE 0 END) / COUNT(*) * 100 as positive_percentage
+    FROM product_reviews
+    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+    GROUP BY product_id
+    HAVING COUNT(*) >= 10
+) review_stats ON p.id = review_stats.product_id
+SET 
+    p.avg_rating = review_stats.avg_rating,
+    p.review_count = review_stats.review_count,
+    p.rating_updated_at = NOW(),
+    p.featured = CASE 
+        WHEN review_stats.positive_percentage > 80 AND review_stats.avg_rating > 4.0 THEN 1
+        ELSE 0
+    END
+WHERE p.status = 'active'</div>
+            </div>
+        </div>
+        
+        <div class="main-panel">
+            <div class="status loading" id="status">Loading WASM module...</div>
+            
+            <div class="input-section">
+                <h3>🔧 SQL Statement:</h3>
+                <div class="code-editor">
+                    <textarea id="sqlInput" placeholder="Enter your SQL statement here...">SELECT users.name, orders.total FROM users JOIN orders ON users.id = orders.user_id WHERE orders.total > 100</textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-primary" onclick="parseSQLButton()">Parse SQL</button>
+                    <button class="btn-secondary" onclick="clearInput()">Clear</button>
+                </div>
+            </div>
+            
+            <div class="input-section" style="flex: 1; display: flex; flex-direction: column;">
+                <h3>📊 Parse Result:</h3>
+                <div id="result" class="result">Ready to parse SQL...</div>
+            </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
     <script src="wasm_exec.js"></script>
     <script>
         const go = new Go();
         let wasmModule;
+        let currentExample = null;
 
         // Load the WASM module
         WebAssembly.instantiateStreaming(fetch("parser.wasm"), go.importObject).then((result) => {
             wasmModule = result;
             go.run(result.instance);
-            document.getElementById("result").textContent = "WASM module loaded successfully with ENHANCED parser driver!\nParser version: " + parserVersion();
+            document.getElementById("status").textContent = "✅ Ready to parse SQL";
+            document.getElementById("status").className = "status ready";
+            document.getElementById("result").textContent = "WASM module loaded successfully with Enhanced Parser Driver!\nParser version: " + parserVersion();
         }).catch((err) => {
             console.error("Failed to load WASM module:", err);
+            document.getElementById("status").textContent = "❌ Failed to load WASM module";
+            document.getElementById("status").className = "status error";
             document.getElementById("result").textContent = "Failed to load WASM module: " + err;
             document.getElementById("result").className = "result error";
         });
+
+        function updateSyntaxHighlighting() {
+            // Simple syntax highlighting for textarea - not needed for this implementation
+        }
 
         function parseSQLButton() {
             const sqlInput = document.getElementById("sqlInput").value;
@@ -71,23 +528,106 @@
                 
                 if (result.success) {
                     resultDiv.className = "result success";
-                    resultDiv.textContent = `✓ SQL parsed successfully!\n\nExtracted columns: [${result.columns.join(', ')}]\n\nColumns found: ${result.columns.length}`;
+                    const uniqueColumns = [...new Set(result.columns)];
+                    const complexity = analyzeQueryComplexity(sqlInput);
+                    
+                    resultDiv.textContent = `✅ SQL parsed successfully!
+
+📊 Column Analysis:
+├─ Total columns found: ${result.columns.length}
+├─ Unique columns: ${uniqueColumns.length}
+└─ Columns: [${result.columns.join(', ')}]
+
+🔍 Unique columns: [${uniqueColumns.join(', ')}]
+
+🧠 Query Complexity: ${complexity.level}
+├─ Keywords: ${complexity.keywords.join(', ')}
+├─ Estimated tables: ${complexity.tableCount}
+└─ Complexity score: ${complexity.score}/10
+
+💡 This query references ${uniqueColumns.length} distinct columns across your database schema.`;
                 } else {
                     resultDiv.className = "result error";
-                    resultDiv.textContent = `✗ Parse failed:\n${result.error}`;
+                    resultDiv.textContent = `❌ Parse failed:
+
+${result.error}
+
+💡 Common issues:
+• Check for missing commas or parentheses
+• Verify table and column names are valid
+• Ensure proper SQL syntax`;
                 }
             } catch (error) {
                 resultDiv.className = "result error";
-                resultDiv.textContent = `✗ Error: ${error.message}`;
+                resultDiv.textContent = `❌ Error: ${error.message}`;
             }
         }
 
-        // Allow Enter key to trigger parsing
+        function analyzeQueryComplexity(sql) {
+            const keywords = [];
+            const complexKeywords = ['JOIN', 'WINDOW', 'WITH', 'RECURSIVE', 'PARTITION', 'RANK', 'ROW_NUMBER', 'LAG', 'LEAD', 'CTE'];
+            const sqlUpper = sql.toUpperCase();
+            
+            let score = 1;
+            
+            complexKeywords.forEach(keyword => {
+                if (sqlUpper.includes(keyword)) {
+                    keywords.push(keyword);
+                    score += keyword === 'RECURSIVE' ? 3 : keyword.includes('_') ? 2 : 1;
+                }
+            });
+            
+            const tableCount = (sql.match(/FROM|JOIN/gi) || []).length;
+            score += Math.min(tableCount, 5);
+            
+            const level = score <= 3 ? 'Simple' : score <= 6 ? 'Moderate' : score <= 8 ? 'Complex' : 'Very Complex';
+            
+            return { level, keywords, tableCount, score: Math.min(score, 10) };
+        }
+
+        function loadExample(element, exampleId) {
+            // Remove active class from all examples
+            document.querySelectorAll('.example-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked example
+            element.classList.add('active');
+            currentExample = exampleId;
+            
+            const sqlText = element.querySelector('.example-sql').textContent;
+            document.getElementById("sqlInput").value = sqlText;
+            
+            // Auto-parse the example
+            setTimeout(() => {
+                parseSQLButton();
+            }, 100);
+        }
+
+        function clearInput() {
+            document.getElementById("sqlInput").value = "";
+            document.getElementById("result").textContent = "Ready to parse SQL...";
+            document.getElementById("result").className = "result";
+            
+            // Remove active class from all examples
+            document.querySelectorAll('.example-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            currentExample = null;
+            
+            // No syntax highlighting needed
+        }
+
+        // Remove syntax highlighting event listener since we're using plain textarea
+
+        // Allow Ctrl+Enter to trigger parsing
         document.getElementById("sqlInput").addEventListener("keydown", function(event) {
             if (event.key === "Enter" && event.ctrlKey) {
                 parseSQLButton();
             }
         });
+
+        // No initialization needed for plain textarea
     </script>
 </body>
 </html>
