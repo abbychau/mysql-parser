@@ -17,8 +17,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pingcap/tidb/pkg/parser"
-	"github.com/pingcap/tidb/pkg/parser/ast"
+	"github.com/abbychau/mysql-parser"
+	"github.com/abbychau/mysql-parser/ast"
 	"github.com/stretchr/testify/require"
 )
 

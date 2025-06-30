@@ -17,11 +17,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pingcap/tidb/pkg/parser"
-	. "github.com/pingcap/tidb/pkg/parser/ast"
-	"github.com/pingcap/tidb/pkg/parser/format"
-	"github.com/pingcap/tidb/pkg/parser/mysql"
-	"github.com/pingcap/tidb/pkg/parser/test_driver"
+	"github.com/abbychau/mysql-parser"
+	. "github.com/abbychau/mysql-parser/ast"
+	"github.com/abbychau/mysql-parser/format"
+	"github.com/abbychau/mysql-parser/mysql"
+	"github.com/abbychau/mysql-parser/test_driver"
 	"github.com/stretchr/testify/require"
 )
 

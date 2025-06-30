@@ -17,7 +17,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/pingcap/tidb/pkg/parser/mysql"
+	"github.com/abbychau/mysql-parser/mysql"
 	"github.com/stretchr/testify/require"
 )
 

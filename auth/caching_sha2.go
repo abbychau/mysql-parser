@@ -39,7 +39,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/pingcap/tidb/pkg/parser/mysql"
+	"github.com/abbychau/mysql-parser/mysql"
 )
 
 const (

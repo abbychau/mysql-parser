@@ -17,13 +17,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pingcap/tidb/pkg/parser"
-	"github.com/pingcap/tidb/pkg/parser/ast"
-	"github.com/pingcap/tidb/pkg/parser/charset"
-	"github.com/pingcap/tidb/pkg/parser/mysql"
+	"github.com/abbychau/mysql-parser"
+	"github.com/abbychau/mysql-parser/ast"
+	"github.com/abbychau/mysql-parser/charset"
+	"github.com/abbychau/mysql-parser/mysql"
 	// import parser_driver
-	_ "github.com/pingcap/tidb/pkg/parser/test_driver"
-	. "github.com/pingcap/tidb/pkg/parser/types"
+	_ "github.com/abbychau/mysql-parser/test_driver"
+	. "github.com/abbychau/mysql-parser/types"
 	"github.com/stretchr/testify/require"
 )
 

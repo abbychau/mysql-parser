@@ -16,8 +16,8 @@ package ast
 import (
 	"sync"
 
-	"github.com/pingcap/tidb/pkg/parser/charset"
-	"github.com/pingcap/tidb/pkg/parser/types"
+	"github.com/abbychau/mysql-parser/charset"
+	"github.com/abbychau/mysql-parser/types"
 )
 
 // node is the struct implements Node interface except for Accept method.

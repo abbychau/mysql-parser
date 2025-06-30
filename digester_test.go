@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pingcap/tidb/pkg/parser"
+	"github.com/abbychau/mysql-parser"
 	"github.com/stretchr/testify/require"
 )
 

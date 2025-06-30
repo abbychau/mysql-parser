@@ -24,7 +24,7 @@ import (
 
 	"github.com/cznic/strutil"
 	"github.com/pingcap/errors"
-	"github.com/pingcap/tidb/pkg/parser/format"
+	"github.com/abbychau/mysql-parser/format"
 	parser "modernc.org/parser/yacc"
 )
 

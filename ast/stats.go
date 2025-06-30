@@ -15,7 +15,7 @@ package ast
 
 import (
 	"github.com/pingcap/errors"
-	"github.com/pingcap/tidb/pkg/parser/format"
+	"github.com/abbychau/mysql-parser/format"
 )
 
 var (

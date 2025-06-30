@@ -1,4 +1,4 @@
-module github.com/pingcap/tidb/pkg/parser
+module github.com/abbychau/mysql-parser
 
 go 1.23
 

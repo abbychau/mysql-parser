@@ -16,9 +16,9 @@ package ast_test
 import (
 	"testing"
 
-	. "github.com/pingcap/tidb/pkg/parser/ast"
-	"github.com/pingcap/tidb/pkg/parser/format"
-	"github.com/pingcap/tidb/pkg/parser/mysql"
+	. "github.com/abbychau/mysql-parser/ast"
+	"github.com/abbychau/mysql-parser/format"
+	"github.com/abbychau/mysql-parser/mysql"
 	"github.com/stretchr/testify/require"
 )
 

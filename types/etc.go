@@ -20,8 +20,8 @@ package types
 import (
 	"strings"
 
-	"github.com/pingcap/tidb/pkg/parser/mysql"
-	"github.com/pingcap/tidb/pkg/parser/terror"
+	"github.com/abbychau/mysql-parser/mysql"
+	"github.com/abbychau/mysql-parser/terror"
 )
 
 // IsTypeBlob returns a boolean indicating whether the tp is a blob type.

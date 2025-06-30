@@ -17,8 +17,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pingcap/tidb/pkg/parser"
-	"github.com/pingcap/tidb/pkg/parser/format"
+	"github.com/abbychau/mysql-parser"
+	"github.com/abbychau/mysql-parser/format"
 	"github.com/stretchr/testify/require"
 )
 

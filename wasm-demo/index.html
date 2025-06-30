@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MySQL Parser WASM Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { margin-bottom: 20px; }
+        textarea { width: 100%; height: 100px; margin-bottom: 10px; font-family: monospace; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        .result { background: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 15px; white-space: pre-wrap; font-family: monospace; }
+        .error { background: #ffe6e6; border: 1px solid #ff0000; }
+        .success { background: #e6ffe6; border: 1px solid #00aa00; }
+        h1 { color: #333; }
+        .example { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>MySQL Parser WASM Demo</h1>
+    
+    <div class="container">
+        <h3>Enter SQL Statement:</h3>
+        <textarea id="sqlInput" placeholder="SELECT name, age FROM users WHERE age > 25">SELECT name, age FROM users WHERE age > 25</textarea>
+        <button onclick="parseSQLButton()">Parse SQL</button>
+    </div>
+    
+    <div class="container">
+        <h3>Result:</h3>
+        <div id="result" class="result">Ready to parse SQL...</div>
+    </div>
+
+    <div class="container">
+        <h3>Examples to try:</h3>
+        <div class="example">
+            • SELECT a, b FROM t<br>
+            • SELECT user.name, profile.email FROM users user JOIN profiles profile ON user.id = profile.user_id<br>
+            • INSERT INTO table1 (col1, col2) VALUES (1, 'test')<br>
+            • UPDATE table1 SET col1 = 5 WHERE col2 = 'value'<br>
+        </div>
+    </div>
+
+    <script src="wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        let wasmModule;
+
+        // Load the WASM module
+        WebAssembly.instantiateStreaming(fetch("parser.wasm"), go.importObject).then((result) => {
+            wasmModule = result;
+            go.run(result.instance);
+            document.getElementById("result").textContent = "WASM module loaded successfully with ENHANCED parser driver!\nParser version: " + parserVersion();
+        }).catch((err) => {
+            console.error("Failed to load WASM module:", err);
+            document.getElementById("result").textContent = "Failed to load WASM module: " + err;
+            document.getElementById("result").className = "result error";
+        });
+
+        function parseSQLButton() {
+            const sqlInput = document.getElementById("sqlInput").value;
+            const resultDiv = document.getElementById("result");
+            
+            if (!sqlInput.trim()) {
+                resultDiv.textContent = "Please enter a SQL statement";
+                resultDiv.className = "result error";
+                return;
+            }
+
+            try {
+                // Call the WASM function
+                const resultJSON = window.parseSQL(sqlInput);
+                const result = JSON.parse(resultJSON);
+                
+                if (result.success) {
+                    resultDiv.className = "result success";
+                    resultDiv.textContent = `✓ SQL parsed successfully!\n\nExtracted columns: [${result.columns.join(', ')}]\n\nColumns found: ${result.columns.length}`;
+                } else {
+                    resultDiv.className = "result error";
+                    resultDiv.textContent = `✗ Parse failed:\n${result.error}`;
+                }
+            } catch (error) {
+                resultDiv.className = "result error";
+                resultDiv.textContent = `✗ Error: ${error.message}`;
+            }
+        }
+
+        // Allow Enter key to trigger parsing
+        document.getElementById("sqlInput").addEventListener("keydown", function(event) {
+            if (event.key === "Enter" && event.ctrlKey) {
+                parseSQLButton();
+            }
+        });
+    </script>
+</body>
+</html>

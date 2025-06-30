@@ -18,9 +18,9 @@ package ast
 import (
 	"io"
 
-	"github.com/pingcap/tidb/pkg/parser/charset"
-	"github.com/pingcap/tidb/pkg/parser/format"
-	"github.com/pingcap/tidb/pkg/parser/types"
+	"github.com/abbychau/mysql-parser/charset"
+	"github.com/abbychau/mysql-parser/format"
+	"github.com/abbychau/mysql-parser/types"
 )
 
 // Node is the basic element of the AST.

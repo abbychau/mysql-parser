@@ -32,7 +32,7 @@ import (
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/pingcap/tidb/pkg/parser/ast"
+	"github.com/abbychau/mysql-parser/ast"
 	requires "github.com/stretchr/testify/require"
 )
 

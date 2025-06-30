@@ -20,8 +20,8 @@ import (
 	"time"
 
 	"github.com/pingcap/errors"
-	"github.com/pingcap/tidb/pkg/parser/format"
-	"github.com/pingcap/tidb/pkg/parser/types"
+	"github.com/abbychau/mysql-parser/format"
+	"github.com/abbychau/mysql-parser/types"
 )
 
 var (

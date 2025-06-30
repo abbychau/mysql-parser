@@ -18,7 +18,7 @@ import (
 	"strings"
 
 	"github.com/pingcap/errors"
-	"github.com/pingcap/tidb/pkg/parser/format"
+	"github.com/abbychau/mysql-parser/format"
 )
 
 func newInvalidModeErr(s string) error {

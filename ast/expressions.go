@@ -21,8 +21,8 @@ import (
 	"strings"
 
 	"github.com/pingcap/errors"
-	"github.com/pingcap/tidb/pkg/parser/format"
-	"github.com/pingcap/tidb/pkg/parser/opcode"
+	"github.com/abbychau/mysql-parser/format"
+	"github.com/abbychau/mysql-parser/opcode"
 )
 
 var (

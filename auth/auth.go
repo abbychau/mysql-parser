@@ -16,7 +16,7 @@ package auth
 import (
 	"fmt"
 
-	"github.com/pingcap/tidb/pkg/parser/format"
+	"github.com/abbychau/mysql-parser/format"
 )
 
 const (

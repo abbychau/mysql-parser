@@ -22,14 +22,14 @@ import (
 	"testing"
 
 	"github.com/pingcap/errors"
-	"github.com/pingcap/tidb/pkg/parser"
-	"github.com/pingcap/tidb/pkg/parser/ast"
-	"github.com/pingcap/tidb/pkg/parser/charset"
-	. "github.com/pingcap/tidb/pkg/parser/format"
-	"github.com/pingcap/tidb/pkg/parser/mysql"
-	"github.com/pingcap/tidb/pkg/parser/opcode"
-	"github.com/pingcap/tidb/pkg/parser/terror"
-	"github.com/pingcap/tidb/pkg/parser/test_driver"
+	"github.com/abbychau/mysql-parser"
+	"github.com/abbychau/mysql-parser/ast"
+	"github.com/abbychau/mysql-parser/charset"
+	. "github.com/abbychau/mysql-parser/format"
+	"github.com/abbychau/mysql-parser/mysql"
+	"github.com/abbychau/mysql-parser/opcode"
+	"github.com/abbychau/mysql-parser/terror"
+	"github.com/abbychau/mysql-parser/test_driver"
 	"github.com/stretchr/testify/require"
 )
 

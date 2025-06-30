@@ -18,7 +18,7 @@ package ast
 import (
 	"testing"
 
-	"github.com/pingcap/tidb/pkg/parser/charset"
+	"github.com/abbychau/mysql-parser/charset"
 	"github.com/stretchr/testify/require"
 )
 

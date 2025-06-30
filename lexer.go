@@ -20,9 +20,9 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/pingcap/tidb/pkg/parser/charset"
-	"github.com/pingcap/tidb/pkg/parser/mysql"
-	tidbfeature "github.com/pingcap/tidb/pkg/parser/tidb"
+	"github.com/abbychau/mysql-parser/charset"
+	"github.com/abbychau/mysql-parser/mysql"
+	tidbfeature "github.com/abbychau/mysql-parser/tidb"
 )
 
 var _ = yyLexer(&Scanner{})

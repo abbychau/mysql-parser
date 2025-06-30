@@ -19,7 +19,7 @@ import (
 	"unsafe"
 
 	"github.com/pingcap/errors"
-	"github.com/pingcap/tidb/pkg/parser/types"
+	"github.com/abbychau/mysql-parser/types"
 )
 
 // TableLockType is the type of the table lock.

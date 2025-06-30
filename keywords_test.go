@@ -16,7 +16,7 @@ package parser_test
 import (
 	"testing"
 
-	"github.com/pingcap/tidb/pkg/parser"
+	"github.com/abbychau/mysql-parser"
 	"github.com/stretchr/testify/require"
 )
 

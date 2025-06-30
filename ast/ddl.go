@@ -15,12 +15,12 @@ package ast
 
 import (
 	"github.com/pingcap/errors"
-	"github.com/pingcap/tidb/pkg/parser/auth"
-	"github.com/pingcap/tidb/pkg/parser/format"
-	"github.com/pingcap/tidb/pkg/parser/mysql"
-	"github.com/pingcap/tidb/pkg/parser/terror"
-	"github.com/pingcap/tidb/pkg/parser/tidb"
-	"github.com/pingcap/tidb/pkg/parser/types"
+	"github.com/abbychau/mysql-parser/auth"
+	"github.com/abbychau/mysql-parser/format"
+	"github.com/abbychau/mysql-parser/mysql"
+	"github.com/abbychau/mysql-parser/terror"
+	"github.com/abbychau/mysql-parser/tidb"
+	"github.com/abbychau/mysql-parser/types"
 )
 
 var (

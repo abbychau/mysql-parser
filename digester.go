@@ -24,7 +24,7 @@ import (
 	"unsafe"
 
 	"github.com/pingcap/errors"
-	"github.com/pingcap/tidb/pkg/parser/charset"
+	"github.com/abbychau/mysql-parser/charset"
 )
 
 // Digest stores the fixed length hash value.

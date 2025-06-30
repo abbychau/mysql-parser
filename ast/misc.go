@@ -22,9 +22,9 @@ import (
 
 	"github.com/pingcap/errors"
 	"github.com/pingcap/failpoint"
-	"github.com/pingcap/tidb/pkg/parser/auth"
-	"github.com/pingcap/tidb/pkg/parser/format"
-	"github.com/pingcap/tidb/pkg/parser/mysql"
+	"github.com/abbychau/mysql-parser/auth"
+	"github.com/abbychau/mysql-parser/format"
+	"github.com/abbychau/mysql-parser/mysql"
 )
 
 var (
