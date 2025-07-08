@@ -2,6 +2,8 @@
 
 A MySQL-compatible SQL parser extracted from TiDB, now available as a standalone Go module with WASM support.
 
+Worth mentioning the database built on top of `mysql-parser`: [MIST](https://github.com/abbychau/mist)
+
 ## Features
 
 - **MySQL Compatibility**: Supports MySQL 5.7+ SQL syntax
