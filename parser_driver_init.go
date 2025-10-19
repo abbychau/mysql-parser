@@ -1,9 +1,12 @@
+//go:build codes
+// +build codes
+
 // Package parser_driver_init initializes the parser_driver for the main parser
 package parser
 
 import (
 	"fmt"
-	
+
 	"github.com/abbychau/mysql-parser/ast"
 	"github.com/abbychau/mysql-parser/charset"
 	myformat "github.com/abbychau/mysql-parser/format"
@@ -21,7 +24,7 @@ func init() {
 		}
 		return nil
 	}
-	
+
 	ast.NewParamMarkerExpr = func(offset int) ast.ParamMarkerExpr {
 		// Create using the parser_driver but return as ast.ParamMarkerExpr interface
 		pme := parser_driver.NewParamMarkerExpr(offset)
@@ -30,7 +33,7 @@ func init() {
 		}
 		return nil
 	}
-	
+
 	ast.NewDecimal = func(str string) (interface{}, error) {
 		return parser_driver.NewDecimal(str)
 	}
@@ -81,7 +84,7 @@ func (v *astValueExpr) Text() string {
 }
 
 func (v *astValueExpr) OriginalText() string {
-	return v.GetString() 
+	return v.GetString()
 }
 
 func (v *astValueExpr) SetText(enc charset.Encoding, text string) {
