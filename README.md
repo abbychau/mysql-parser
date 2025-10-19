@@ -26,6 +26,8 @@ This parser provides MySQL-compatible SQL parsing with full AST support and two 
 
 ```bash
 go get github.com/abbychau/mysql-parser
+# or
+go get github.com/abbychau/mysql-parser@v0.1.0
 ```
 
 ## Usage Examples
