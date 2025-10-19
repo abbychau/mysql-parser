@@ -3,6 +3,7 @@ module github.com/abbychau/mysql-parser
 go 1.23
 
 require (
+	github.com/abbychau/mysql-parser/parser_driver v0.0.0-20250708175144-49b72177759a
 	github.com/cznic/mathutil v0.0.0-20181122101859-297441e03548
 	github.com/cznic/sortutil v0.0.0-20181122101858-f5f958428db8
 	github.com/cznic/strutil v0.0.0-20181122101858-275e90344537
