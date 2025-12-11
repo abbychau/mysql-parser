@@ -25,14 +25,13 @@
         
         .header h1 {
             font-size: 2.5em;
-            margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         .github-link {
             position: absolute;
-            top: 15px;
-            right: 20px;
+            top: 22px;
+            right: 22px;
             background: rgba(255,255,255,0.1);
             color: white;
             padding: 8px 16px;
@@ -196,7 +195,7 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2f855a 0%, #2d3748 50%);
             color: white;
         }
         
@@ -477,11 +476,13 @@ WHERE p.status = 'active'</div>
                 <div class="button-group">
                     <button class="btn-primary" onclick="parseSQLButton()">Parse SQL</button>
                     <button class="btn-secondary" onclick="clearInput()">Clear</button>
+                    <button class="btn-secondary" onclick="runStressTest(1000)">Stress Test (1k)</button>
+                    <button class="btn-secondary" onclick="runStressTest(10000)">Stress Test (10k)</button>
                 </div>
             </div>
             
             <div class="input-section" style="flex: 1; display: flex; flex-direction: column;">
-                <h3>📊 Parse Result:</h3>
+                <h3>Parse Result:</h3>
                 <div id="result" class="result">Ready to parse SQL...</div>
             </div>
         </div>
@@ -499,12 +500,12 @@ WHERE p.status = 'active'</div>
         WebAssembly.instantiateStreaming(fetch("parser.wasm"), go.importObject).then((result) => {
             wasmModule = result;
             go.run(result.instance);
-            document.getElementById("status").textContent = "✅ Ready to parse SQL";
+            document.getElementById("status").textContent = "Ready to parse SQL";
             document.getElementById("status").className = "status ready";
             document.getElementById("result").textContent = "WASM module loaded successfully with Enhanced Parser Driver!\nParser version: " + parserVersion();
         }).catch((err) => {
             console.error("Failed to load WASM module:", err);
-            document.getElementById("status").textContent = "❌ Failed to load WASM module";
+            document.getElementById("status").textContent = "Failed to load WASM module";
             document.getElementById("status").className = "status error";
             document.getElementById("result").textContent = "Failed to load WASM module: " + err;
             document.getElementById("result").className = "result error";
@@ -564,6 +565,54 @@ Common issues:
         }
 
 
+
+        function runStressTest(iterations = 1000) {
+            const sqlInput = document.getElementById("sqlInput").value;
+            const resultDiv = document.getElementById("result");
+            
+            if (!sqlInput.trim()) {
+                resultDiv.textContent = "Please enter a SQL statement to stress test";
+                resultDiv.className = "result error";
+                return;
+            }
+
+            resultDiv.textContent = `Running stress test (${iterations} iterations)...`;
+            resultDiv.className = "result";
+
+            // Use setTimeout to allow UI to update before blocking
+            setTimeout(() => {
+                try {
+                    const start = performance.now();
+                    
+                    let successCount = 0;
+                    
+                    for (let i = 0; i < iterations; i++) {
+                        const resultJSON = window.parseSQL(sqlInput);
+                        const result = JSON.parse(resultJSON);
+                        if (result.success) successCount++;
+                    }
+                    
+                    const end = performance.now();
+                    const totalTime = end - start;
+                    const avgTime = totalTime / iterations;
+                    const opsPerSec = (iterations / totalTime) * 1000;
+                    
+                    resultDiv.className = "result success";
+                    resultDiv.textContent = `Stress Test Results (${iterations} iterations):
+
+ Total Time: ${totalTime.toFixed(2)}ms
+ Average Time: ${avgTime.toFixed(4)}ms/op
+ Throughput: ${opsPerSec.toFixed(2)} ops/sec
+ Successful Parses: ${successCount}/${iterations}
+
+Statement length: ${sqlInput.length} chars`;
+                    
+                } catch (error) {
+                    resultDiv.className = "result error";
+                    resultDiv.textContent = `❌ Stress Test Failed: ${error.message}`;
+                }
+            }, 50);
+        }
 
         function loadExample(element, exampleId) {
             // Remove active class from all examples
