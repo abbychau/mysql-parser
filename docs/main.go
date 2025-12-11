@@ -3,34 +3,46 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"strings"
 	"syscall/js"
 
-	"github.com/abbychau/mysql-parser"
+	parser "github.com/abbychau/mysql-parser"
 	"github.com/abbychau/mysql-parser/ast"
 	_ "github.com/abbychau/mysql-parser/parser_driver"
 )
 
-// ColumnExtractor implements ast.Visitor to extract column names
-type ColumnExtractor struct {
-	ColNames []string `json:"columns"`
+// InfoExtractor implements ast.Visitor to extract column and table names
+type InfoExtractor struct {
+	ColNames   []string
+	TableNames []string
 }
 
-func (v *ColumnExtractor) Enter(in ast.Node) (ast.Node, bool) {
+func (v *InfoExtractor) Enter(in ast.Node) (ast.Node, bool) {
 	if name, ok := in.(*ast.ColumnName); ok {
 		v.ColNames = append(v.ColNames, name.Name.O)
+	}
+	if name, ok := in.(*ast.TableName); ok {
+		fullTableName := name.Name.O
+		if name.Schema.O != "" {
+			fullTableName = name.Schema.O + "." + name.Name.O
+		}
+		v.TableNames = append(v.TableNames, fullTableName)
 	}
 	return in, false
 }
 
-func (v *ColumnExtractor) Leave(in ast.Node) (ast.Node, bool) {
+func (v *InfoExtractor) Leave(in ast.Node) (ast.Node, bool) {
 	return in, true
 }
 
 // ParseResult represents the result of parsing
 type ParseResult struct {
-	Success bool     `json:"success"`
-	Columns []string `json:"columns,omitempty"`
-	Error   string   `json:"error,omitempty"`
+	Success  bool     `json:"success"`
+	Columns  []string `json:"columns,omitempty"`
+	Tables   []string `json:"tables,omitempty"`
+	StmtType string   `json:"stmtType,omitempty"`
+	Error    string   `json:"error,omitempty"`
 }
 
 // parseSQL is the main function exposed to JavaScript
@@ -45,10 +57,10 @@ func parseSQL(this js.Value, args []js.Value) interface{} {
 	}
 
 	sqlText := args[0].String()
-	
+
 	// Create parser instance
 	p := parser.New()
-	
+
 	// Parse the SQL
 	stmtNodes, _, err := p.ParseSQL(sqlText)
 	if err != nil {
@@ -69,31 +81,46 @@ func parseSQL(this js.Value, args []js.Value) interface{} {
 		return string(jsonBytes)
 	}
 
-	// Extract columns using visitor pattern
-	extractor := &ColumnExtractor{}
+	// Extract info using visitor pattern
+	extractor := &InfoExtractor{}
 	stmtNodes[0].Accept(extractor)
 
-	result := ParseResult{
-		Success: true,
-		Columns: extractor.ColNames,
+	// Determine statement type
+	stmtType := "UNKNOWN"
+	if len(stmtNodes) > 0 {
+		t := reflect.TypeOf(stmtNodes[0])
+		if t.Kind() == reflect.Ptr {
+			stmtType = t.Elem().Name()
+		} else {
+			stmtType = t.Name()
+		}
+		stmtType = strings.TrimSuffix(stmtType, "Stmt")
+		stmtType = strings.ToUpper(stmtType)
 	}
-	
+
+	result := ParseResult{
+		Success:  true,
+		Columns:  extractor.ColNames,
+		Tables:   extractor.TableNames,
+		StmtType: stmtType,
+	}
+
 	jsonBytes, _ := json.Marshal(result)
 	return string(jsonBytes)
 }
 
 // version returns the version of the parser
 func version(this js.Value, args []js.Value) interface{} {
-	return "MySQL Parser WASM Demo v3.0.0 (Enhanced Parser Driver with Full Types)"
+	return "MySQL Parser WASM Demo v3.1.0 (Enhanced Parser Driver with Full Types)"
 }
 
 func main() {
 	fmt.Println("MySQL Parser WASM initialized")
-	
+
 	// Register functions to be called from JavaScript
 	js.Global().Set("parseSQL", js.FuncOf(parseSQL))
 	js.Global().Set("parserVersion", js.FuncOf(version))
-	
+
 	// Keep the program running
 	select {}
 }

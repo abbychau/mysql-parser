@@ -1,4 +1,4 @@
-.PHONY: all parser clean
+.PHONY: all parser clean preview-doc
 
 all: fmt parser generate
 
@@ -34,3 +34,6 @@ clean:
 	go clean -i ./...
 	rm -rf *.out
 	rm -f parser.go hintparser.go
+
+preview-doc:
+	python3 -m http.server -d docs

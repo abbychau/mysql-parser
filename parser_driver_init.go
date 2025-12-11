@@ -1,6 +1,3 @@
-//go:build codes
-// +build codes
-
 // Package parser_driver_init initializes the parser_driver for the main parser
 package parser
 
