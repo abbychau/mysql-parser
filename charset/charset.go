@@ -192,15 +192,10 @@ func GetCharsetInfoByID(coID int) (charsetStr string, collateStr string, err err
 	return mysql.DefaultCharset, mysql.DefaultCollationName, errors.Errorf("Unknown collation id %d", coID)
 }
 
+// utf8Alias maps a utf8mb3_* collation name to its utf8_* alias.
 func utf8Alias(csname string) string {
-	switch csname {
-	case "utf8mb3_bin":
-		csname = "utf8_bin"
-	case "utf8mb3_unicode_ci":
-		csname = "utf8_unicode_ci"
-	case "utf8mb3_general_ci":
-		csname = "utf8_general_ci"
-	default:
+	if strings.HasPrefix(csname, "utf8mb3_") {
+		return "utf8_" + strings.TrimPrefix(csname, "utf8mb3_")
 	}
 	return csname
 }
@@ -210,9 +205,77 @@ func GetCollationByName(name string) (*Collation, error) {
 	csname := utf8Alias(strings.ToLower(name))
 	collation, ok := collationsNameMap[csname]
 	if !ok {
+		if c := mariaDBCollation(strings.ToLower(name)); c != nil {
+			return c, nil
+		}
 		return nil, ErrUnknownCollation.GenWithStackByArgs(name)
 	}
 	return collation, nil
+}
+
+// mariaDBUCA1400Languages are the language tailorings of the MariaDB
+// UCA 14.0.0 collations.
+var mariaDBUCA1400Languages = map[string]struct{}{
+	"icelandic": {}, "latvian": {}, "romanian": {}, "slovenian": {}, "polish": {},
+	"estonian": {}, "spanish": {}, "swedish": {}, "turkish": {}, "czech": {},
+	"danish": {}, "lithuanian": {}, "slovak": {}, "spanish2": {}, "roman": {},
+	"persian": {}, "esperanto": {}, "hungarian": {}, "sinhala": {}, "german2": {},
+	"croatian": {}, "vietnamese": {},
+}
+
+// mariaDBCollation returns the MariaDB-only collations that are not in the
+// MySQL collation table:
+//
+//   - <charset>_uca1400[_<language>][_nopad]_{ai|as}_{ci|cs} (MariaDB 10.10+,
+//     the default collations since MariaDB 11.5)
+//   - <charset>_nopad_bin and the _nopad_ci variants of existing collations
+//
+// The collations have no fixed ID here, so they are not in the ID map.
+func mariaDBCollation(name string) *Collation {
+	cs, rest, ok := strings.Cut(name, "_")
+	if !ok {
+		return nil
+	}
+	info, err := GetCharsetInfo(cs)
+	if info == nil {
+		return nil
+	}
+	_ = err
+	c := &Collation{CharsetName: info.Name, Name: name, Sortlen: 1, PadAttribute: PadSpace}
+	if rest == "nopad_bin" {
+		c.PadAttribute = PadNone
+		return c
+	}
+	if base, ok := strings.CutSuffix(rest, "_nopad_ci"); ok {
+		if _, ok := collationsNameMap[utf8Alias(cs+"_"+base+"_ci")]; ok {
+			c.PadAttribute = PadNone
+			return c
+		}
+		return nil
+	}
+	parts := strings.Split(rest, "_")
+	if len(parts) < 3 || parts[0] != "uca1400" {
+		return nil
+	}
+	accent, cased := parts[len(parts)-2], parts[len(parts)-1]
+	if (accent != "ai" && accent != "as") || (cased != "ci" && cased != "cs") {
+		return nil
+	}
+	middle := parts[1 : len(parts)-2]
+	if len(middle) > 0 && middle[len(middle)-1] == "nopad" {
+		c.PadAttribute = PadNone
+		middle = middle[:len(middle)-1]
+	}
+	switch len(middle) {
+	case 0:
+	case 1:
+		if _, ok := mariaDBUCA1400Languages[middle[0]]; !ok {
+			return nil
+		}
+	default:
+		return nil
+	}
+	return c
 }
 
 // GetCollationByID returns collations by given id.

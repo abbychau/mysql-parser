@@ -18,7 +18,7 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/pingcap/tidb/pkg/parser/ast"
+	"github.com/abbychau/mysql-parser/ast"
 )
 
 %}

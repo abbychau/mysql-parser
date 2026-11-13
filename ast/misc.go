@@ -959,6 +959,9 @@ type VariableAssignment struct {
 	Value    ExprNode
 	IsGlobal bool
 	IsSystem bool
+	// Column is set for an assignment to a column of the NEW or OLD row in a
+	// trigger body (SET NEW.col = expr). Name is empty then.
+	Column *ColumnName
 
 	// ExtendValue is a way to store extended info.
 	// VariableAssignment should be able to store information for SetCharset/SetPWD Stmt.
@@ -969,6 +972,16 @@ type VariableAssignment struct {
 
 // Restore implements Node interface.
 func (n *VariableAssignment) Restore(ctx *format.RestoreCtx) error {
+	if n.Column != nil {
+		if err := n.Column.Restore(ctx); err != nil {
+			return errors.Annotate(err, "An error occurred while restore VariableAssignment.Column")
+		}
+		ctx.WritePlain("=")
+		if err := n.Value.Restore(ctx); err != nil {
+			return errors.Annotate(err, "An error occurred while restore VariableAssignment.Value")
+		}
+		return nil
+	}
 	if n.IsSystem {
 		ctx.WritePlain("@@")
 		if n.IsGlobal {

@@ -1571,6 +1571,14 @@ func (n *SelectStmt) Accept(v Visitor) (Node, bool) {
 		}
 	}
 
+	if n.SelectIntoOpt != nil {
+		node, ok := n.SelectIntoOpt.Accept(v)
+		if !ok {
+			return n, false
+		}
+		n.SelectIntoOpt = node.(*SelectIntoOption)
+	}
+
 	return v.Leave(n)
 }
 
@@ -3647,12 +3655,27 @@ type SelectIntoOption struct {
 	FileName   string
 	FieldsInfo *FieldsClause
 	LinesInfo  *LinesClause
+	// Variables are the targets of SELECT ... INTO var_list: user variables
+	// (*VariableExpr) or local variables of a stored program (*ColumnNameExpr).
+	Variables []ExprNode
 }
 
 // Restore implements Node interface.
 func (n *SelectIntoOption) Restore(ctx *format.RestoreCtx) error {
+	if n.Tp == SelectIntoVars {
+		ctx.WriteKeyWord("INTO ")
+		for i, v := range n.Variables {
+			if i > 0 {
+				ctx.WritePlain(",")
+			}
+			if err := v.Restore(ctx); err != nil {
+				return errors.Annotatef(err, "An error occurred while restore SelectInto.Variables[%d]", i)
+			}
+		}
+		return nil
+	}
 	if n.Tp != SelectIntoOutfile {
-		// only support SELECT/TABLE/VALUES ... INTO OUTFILE statement now
+		// only support SELECT/TABLE/VALUES ... INTO OUTFILE and INTO var_list now
 		return errors.New("Unsupported SelectionInto type")
 	}
 
@@ -3676,6 +3699,14 @@ func (n *SelectIntoOption) Accept(v Visitor) (Node, bool) {
 	newNode, skipChildren := v.Enter(n)
 	if skipChildren {
 		return v.Leave(newNode)
+	}
+	n = newNode.(*SelectIntoOption)
+	for i, val := range n.Variables {
+		node, ok := val.Accept(v)
+		if !ok {
+			return n, false
+		}
+		n.Variables[i] = node.(ExprNode)
 	}
 	return v.Leave(n)
 }

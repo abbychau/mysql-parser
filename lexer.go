@@ -529,8 +529,15 @@ func startWithSlash(s *Scanner) (tok int, pos Pos, lit string) {
 	switch s.r.readByte() {
 	case '!': // '/*!' MySQL-specific comments
 		// See http://dev.mysql.com/doc/refman/5.7/en/comments.html
-		// in '/*!', which we always recognize regardless of version.
-		s.scanVersionDigits(5, 5)
+		// in '/*!', which we always recognize regardless of version,
+		// except for versions of 99.0.0 and above (/*!990000), which no server
+		// has. mariadb-dump writes "/*!999999\- enable the sandbox mode */" so
+		// that older clients skip the line; it is an ordinary comment.
+		start := s.r.pos().Offset
+		s.scanVersionDigits(5, 6)
+		if version := s.r.s[start:s.r.pos().Offset]; len(version) == 6 && version >= "990000" {
+			break
+		}
 		s.inBangComment = true
 		return s.scan()
 
