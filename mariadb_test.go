@@ -152,3 +152,16 @@ func TestMariaDBMisc(t *testing.T) {
 	}
 	RunTest(t, table, false)
 }
+
+func TestMariaDBCollations(t *testing.T) {
+	table := []testCase{
+		{"CREATE TABLE t (a VARCHAR(10) COLLATE utf8mb4_uca1400_ai_ci) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci", true,
+			"CREATE TABLE `t` (`a` VARCHAR(10) COLLATE utf8mb4_uca1400_ai_ci) DEFAULT CHARACTER SET = UTF8MB4 DEFAULT COLLATE = UTF8MB4_UCA1400_AI_CI"},
+		{"CREATE TABLE t (a VARCHAR(10) COLLATE utf8mb4_uca1400_czech_nopad_as_cs, b VARCHAR(10) COLLATE utf8mb3_uca1400_ai_ci, c VARCHAR(10) COLLATE utf8mb4_nopad_bin, d VARCHAR(10) COLLATE utf8mb4_unicode_nopad_ci)", true,
+			"CREATE TABLE `t` (`a` VARCHAR(10) COLLATE utf8mb4_uca1400_czech_nopad_as_cs,`b` VARCHAR(10) COLLATE utf8mb3_uca1400_ai_ci,`c` VARCHAR(10) COLLATE utf8mb4_nopad_bin,`d` VARCHAR(10) COLLATE utf8mb4_unicode_nopad_ci)"},
+		{"CREATE TABLE t (a VARCHAR(10) COLLATE utf8mb4_uca1400_klingon_ai_ci)", false, ""},
+		{"CREATE TABLE t (a VARCHAR(10) COLLATE utf8mb4_uca1400_ai)", false, ""},
+		{"CREATE TABLE t (a VARCHAR(10) COLLATE nosuch_uca1400_ai_ci)", false, ""},
+	}
+	RunTest(t, table, false)
+}
