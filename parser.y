@@ -29,13 +29,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pingcap/tidb/pkg/parser/mysql"
-	"github.com/pingcap/tidb/pkg/parser/ast"
-	"github.com/pingcap/tidb/pkg/parser/opcode"
-	"github.com/pingcap/tidb/pkg/parser/auth"
-	"github.com/pingcap/tidb/pkg/parser/charset"
-	"github.com/pingcap/tidb/pkg/parser/types"
-	"github.com/pingcap/tidb/pkg/parser/duration"
+	"github.com/abbychau/mysql-parser/mysql"
+	"github.com/abbychau/mysql-parser/ast"
+	"github.com/abbychau/mysql-parser/opcode"
+	"github.com/abbychau/mysql-parser/auth"
+	"github.com/abbychau/mysql-parser/charset"
+	"github.com/abbychau/mysql-parser/types"
+	"github.com/abbychau/mysql-parser/duration"
 )
 %}
 
