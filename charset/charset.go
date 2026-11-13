@@ -192,15 +192,10 @@ func GetCharsetInfoByID(coID int) (charsetStr string, collateStr string, err err
 	return mysql.DefaultCharset, mysql.DefaultCollationName, errors.Errorf("Unknown collation id %d", coID)
 }
 
+// utf8Alias maps a utf8mb3_* collation name to its utf8_* alias.
 func utf8Alias(csname string) string {
-	switch csname {
-	case "utf8mb3_bin":
-		csname = "utf8_bin"
-	case "utf8mb3_unicode_ci":
-		csname = "utf8_unicode_ci"
-	case "utf8mb3_general_ci":
-		csname = "utf8_general_ci"
-	default:
+	if strings.HasPrefix(csname, "utf8mb3_") {
+		return "utf8_" + strings.TrimPrefix(csname, "utf8mb3_")
 	}
 	return csname
 }

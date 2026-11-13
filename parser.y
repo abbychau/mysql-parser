@@ -284,7 +284,6 @@ import (
 	unique            "UNIQUE"
 	unlock            "UNLOCK"
 	unsigned          "UNSIGNED"
-	until             "UNTIL"
 	update            "UPDATE"
 	usage             "USAGE"
 	use               "USE"
@@ -333,6 +332,7 @@ import (
 	backup                     "BACKUP"
 	backups                    "BACKUPS"
 	bdr                        "BDR"
+	before                     "BEFORE"
 	begin                      "BEGIN"
 	bernoulli                  "BERNOULLI"
 	binding                    "BINDING"
@@ -408,6 +408,8 @@ import (
 	do                         "DO"
 	duplicate                  "DUPLICATE"
 	dynamic                    "DYNAMIC"
+	each                       "EACH"
+	emptyKwd                   "EMPTY"
 	enable                     "ENABLE"
 	enabled                    "ENABLED"
 	encryption                 "ENCRYPTION"
@@ -440,11 +442,15 @@ import (
 	fixed                      "FIXED"
 	flush                      "FLUSH"
 	following                  "FOLLOWING"
+	follows                    "FOLLOWS"
 	format                     "FORMAT"
 	found                      "FOUND"
 	full                       "FULL"
 	function                   "FUNCTION"
 	general                    "GENERAL"
+	geomcollectionType         "GEOMCOLLECTION"
+	geometryType               "GEOMETRY"
+	geometrycollectionType     "GEOMETRYCOLLECTION"
 	global                     "GLOBAL"
 	grants                     "GRANTS"
 	handler                    "HANDLER"
@@ -471,6 +477,7 @@ import (
 	isolation                  "ISOLATION"
 	issuer                     "ISSUER"
 	jsonType                   "JSON"
+	jsonTable                  "JSON_TABLE"
 	keyBlockSize               "KEY_BLOCK_SIZE"
 	labels                     "LABELS"
 	language                   "LANGUAGE"
@@ -479,6 +486,7 @@ import (
 	lastBackup                 "LAST_BACKUP"
 	less                       "LESS"
 	level                      "LEVEL"
+	linestringType             "LINESTRING"
 	list                       "LIST"
 	loadStats                  "LOAD_STATS"
 	local                      "LOCAL"
@@ -504,9 +512,13 @@ import (
 	mode                       "MODE"
 	modify                     "MODIFY"
 	month                      "MONTH"
+	multilinestringType        "MULTILINESTRING"
+	multipointType             "MULTIPOINT"
+	multipolygonType           "MULTIPOLYGON"
 	names                      "NAMES"
 	national                   "NATIONAL"
 	ncharType                  "NCHAR"
+	nested                     "NESTED"
 	never                      "NEVER"
 	next                       "NEXT"
 	nextval                    "NEXTVAL"
@@ -522,6 +534,7 @@ import (
 	nulls                      "NULLS"
 	nvarcharType               "NVARCHAR"
 	off                        "OFF"
+	offline                    "OFFLINE"
 	offset                     "OFFSET"
 	oltpReadOnly               "OLTP_READ_ONLY"
 	oltpReadWrite              "OLTP_READ_WRITE"
@@ -531,6 +544,7 @@ import (
 	onDuplicate                "ON_DUPLICATE"
 	open                       "OPEN"
 	optional                   "OPTIONAL"
+	ordinality                 "ORDINALITY"
 	packKeys                   "PACK_KEYS"
 	pageSym                    "PAGE"
 	parser                     "PARSER"
@@ -539,14 +553,18 @@ import (
 	partitions                 "PARTITIONS"
 	password                   "PASSWORD"
 	passwordLockTime           "PASSWORD_LOCK_TIME"
+	path                       "PATH"
 	pause                      "PAUSE"
 	percent                    "PERCENT"
+	persistent                 "PERSISTENT"
 	per_db                     "PER_DB"
 	per_table                  "PER_TABLE"
 	pipesAsOr
 	plugins                    "PLUGINS"
 	point                      "POINT"
 	policy                     "POLICY"
+	polygonType                "POLYGON"
+	precedes                   "PRECEDES"
 	preceding                  "PRECEDING"
 	prepare                    "PREPARE"
 	preserve                   "PRESERVE"
@@ -583,6 +601,7 @@ import (
 	restore                    "RESTORE"
 	restores                   "RESTORES"
 	resume                     "RESUME"
+	returns                    "RETURNS"
 	reuse                      "REUSE"
 	reverse                    "REVERSE"
 	role                       "ROLE"
@@ -621,6 +640,7 @@ import (
 	slow                       "SLOW"
 	snapshot                   "SNAPSHOT"
 	some                       "SOME"
+	soname                     "SONAME"
 	source                     "SOURCE"
 	sqlBufferResult            "SQL_BUFFER_RESULT"
 	sqlCache                   "SQL_CACHE"
@@ -644,6 +664,7 @@ import (
 	status                     "STATUS"
 	storage                    "STORAGE"
 	strictFormat               "STRICT_FORMAT"
+	stringKwd                  "STRING"
 	subject                    "SUBJECT"
 	subpartition               "SUBPARTITION"
 	subpartitions              "SUBPARTITIONS"
@@ -682,6 +703,7 @@ import (
 	unicodeSym                 "UNICODE"
 	unknown                    "UNKNOWN"
 	unset                      "UNSET"
+	until                      "UNTIL"
 	user                       "USER"
 	validation                 "VALIDATION"
 	value                      "VALUE"
@@ -966,6 +988,7 @@ import (
 	NextValueForSequenceParentheses "Default nextval expression within potential parentheses"
 	NextValueForSequence            "Default nextval expression"
 	BuiltinFunction                 "Default builtin functions for columns"
+	BuiltinFunctionCall             "Default builtin function call for columns"
 	FunctionNameSequence            "Function with sequence function call"
 	WindowFuncCall                  "WINDOW function call"
 	RepeatableOpt                   "Repeatable optional in sample clause"
@@ -997,6 +1020,9 @@ import (
 	CreateBindingStmt          "CREATE BINDING statement"
 	CreatePolicyStmt           "CREATE PLACEMENT POLICY statement"
 	CreateProcedureStmt        "CREATE PROCEDURE statement"
+	CreateTriggerStmt          "CREATE TRIGGER statement"
+	CreateLoadableFunctionStmt "CREATE FUNCTION ... SONAME statement"
+	AlterViewStmt              "ALTER VIEW statement"
 	AddQueryWatchStmt          "ADD QUERY WATCH statement"
 	CreateResourceGroupStmt    "CREATE RESOURCE GROUP statement"
 	CreateSequenceStmt         "CREATE SEQUENCE statement"
@@ -1005,6 +1031,7 @@ import (
 	DropDatabaseStmt           "DROP DATABASE statement"
 	DropIndexStmt              "DROP INDEX statement"
 	DropProcedureStmt          "DROP PROCEDURE statement"
+	DropTriggerStmt            "DROP TRIGGER statement"
 	DropQueryWatchStmt         "DROP QUERY WATCH statement"
 	DropResourceGroupStmt      "DROP RESOURCE GROUP statement"
 	DropStatisticsStmt         "DROP STATISTICS statement"
@@ -1212,6 +1239,19 @@ import (
 	IfExists                               "If Exists"
 	IfNotExists                            "If Not Exists"
 	IgnoreOptional                         "IGNORE or empty"
+	AlterTableOnlineOpt                    "ONLINE or empty"
+	CreateIndexOnlineOpt                   "ONLINE, OFFLINE or empty"
+	TriggerTiming                          "BEFORE or AFTER"
+	JSONTable                              "JSON_TABLE table function"
+	JSONTableColumns                       "JSON_TABLE COLUMNS clause"
+	JSONTableColumnList                    "JSON_TABLE column list"
+	JSONTableColumn                        "JSON_TABLE column"
+	JSONTableOnEmptyOnError                "JSON_TABLE ON EMPTY and ON ERROR clauses"
+	JSONTableResponse                      "JSON_TABLE ON EMPTY or ON ERROR action"
+	TriggerEvent                           "INSERT, UPDATE or DELETE"
+	TriggerOrderOpt                        "FOLLOWS or PRECEDES clause"
+	LoadableFunctionReturns                "return type of a loadable function"
+	LockWaitOpt                            "WAIT n, NOWAIT or empty"
 	IndexHint                              "index hint"
 	IndexHintList                          "index hint list"
 	IndexHintListOpt                       "index hint list opt"
@@ -1339,6 +1379,9 @@ import (
 	SelectStmtFromTable                    "SELECT statement from table"
 	SelectStmtGroup                        "SELECT statement optional GROUP BY clause"
 	SelectStmtIntoOption                   "SELECT statement into clause"
+	SelectStmtIntoVarsOpt                  "SELECT statement into variables clause placed before FROM"
+	SelectIntoVarList                      "SELECT ... INTO variable list"
+	SelectIntoVar                          "SELECT ... INTO variable"
 	SequenceOption                         "Create sequence option"
 	SequenceOptionList                     "Create sequence option list"
 	SetRoleOpt                             "Set role options"
@@ -1482,6 +1525,7 @@ import (
 	BlobType                               "Blob types"
 	TextType                               "Text types"
 	DateAndTimeType                        "Date and Time types"
+	SpatialType                            "Spatial types"
 	OptFieldLen                            "Field length or empty"
 	FieldLen                               "Field length"
 	FieldOpts                              "Field type definition option list"
@@ -1631,11 +1675,14 @@ import (
 	RoleNameString                  "role name string"
 	ShowDatabaseNameOpt             "Show tables/columns statement database name option"
 	StringName                      "string literal or identifier"
+	SpatialTypeName                 "spatial type name"
 	StringNameOrBRIEOptionKeyword   "string literal or identifier or keyword used for BRIE options"
 	Symbol                          "Constraint Symbol"
 	ProcedurceLabelOpt              "Optional Procedure label name"
 
 %precedence empty
+%precedence lowerThanInto
+%precedence into
 %precedence statsExtended
 %precedence as
 %precedence placement
@@ -1721,58 +1768,60 @@ Start:
  * See https://dev.mysql.com/doc/refman/5.7/en/alter-table.html
  *******************************************************************************************/
 AlterTableStmt:
-	"ALTER" IgnoreOptional "TABLE" TableName AlterTableSpecListOpt AlterTableSpecSingleOpt
+	"ALTER" AlterTableOnlineOpt IgnoreOptional "TABLE" IfExists TableName AlterTableSpecListOpt AlterTableSpecSingleOpt
 	{
-		specs := $5.([]*ast.AlterTableSpec)
-		if $6 != nil {
-			specs = append(specs, $6.(*ast.AlterTableSpec))
+		specs := $7.([]*ast.AlterTableSpec)
+		if $8 != nil {
+			specs = append(specs, $8.(*ast.AlterTableSpec))
 		}
 		$$ = &ast.AlterTableStmt{
-			Table: $4.(*ast.TableName),
-			Specs: specs,
+			Table:    $6.(*ast.TableName),
+			Specs:    specs,
+			Online:   $2.(bool),
+			IfExists: $5.(bool),
 		}
 	}
-|	"ALTER" IgnoreOptional "TABLE" TableName "ANALYZE" "PARTITION" PartitionNameList AnalyzeOptionListOpt
+|	"ALTER" AlterTableOnlineOpt IgnoreOptional "TABLE" IfExists TableName "ANALYZE" "PARTITION" PartitionNameList AnalyzeOptionListOpt
 	{
-		$$ = &ast.AnalyzeTableStmt{TableNames: []*ast.TableName{$4.(*ast.TableName)}, PartitionNames: $7.([]ast.CIStr), AnalyzeOpts: $8.([]ast.AnalyzeOpt)}
+		$$ = &ast.AnalyzeTableStmt{TableNames: []*ast.TableName{$6.(*ast.TableName)}, PartitionNames: $9.([]ast.CIStr), AnalyzeOpts: $10.([]ast.AnalyzeOpt)}
 	}
-|	"ALTER" IgnoreOptional "TABLE" TableName "ANALYZE" "PARTITION" PartitionNameList "INDEX" IndexNameList AnalyzeOptionListOpt
+|	"ALTER" AlterTableOnlineOpt IgnoreOptional "TABLE" IfExists TableName "ANALYZE" "PARTITION" PartitionNameList "INDEX" IndexNameList AnalyzeOptionListOpt
 	{
 		$$ = &ast.AnalyzeTableStmt{
-			TableNames:     []*ast.TableName{$4.(*ast.TableName)},
-			PartitionNames: $7.([]ast.CIStr),
-			IndexNames:     $9.([]ast.CIStr),
+			TableNames:     []*ast.TableName{$6.(*ast.TableName)},
+			PartitionNames: $9.([]ast.CIStr),
+			IndexNames:     $11.([]ast.CIStr),
 			IndexFlag:      true,
-			AnalyzeOpts:    $10.([]ast.AnalyzeOpt),
+			AnalyzeOpts:    $12.([]ast.AnalyzeOpt),
 		}
 	}
-|	"ALTER" IgnoreOptional "TABLE" TableName "COMPACT"
+|	"ALTER" AlterTableOnlineOpt IgnoreOptional "TABLE" IfExists TableName "COMPACT"
 	{
 		$$ = &ast.CompactTableStmt{
-			Table:       $4.(*ast.TableName),
+			Table:       $6.(*ast.TableName),
 			ReplicaKind: ast.CompactReplicaKindAll,
 		}
 	}
-|	"ALTER" IgnoreOptional "TABLE" TableName "COMPACT" "TIFLASH" "REPLICA"
+|	"ALTER" AlterTableOnlineOpt IgnoreOptional "TABLE" IfExists TableName "COMPACT" "TIFLASH" "REPLICA"
 	{
 		$$ = &ast.CompactTableStmt{
-			Table:       $4.(*ast.TableName),
+			Table:       $6.(*ast.TableName),
 			ReplicaKind: ast.CompactReplicaKindTiFlash,
 		}
 	}
-|	"ALTER" IgnoreOptional "TABLE" TableName "COMPACT" "PARTITION" PartitionNameList
+|	"ALTER" AlterTableOnlineOpt IgnoreOptional "TABLE" IfExists TableName "COMPACT" "PARTITION" PartitionNameList
 	{
 		$$ = &ast.CompactTableStmt{
-			Table:          $4.(*ast.TableName),
-			PartitionNames: $7.([]ast.CIStr),
+			Table:          $6.(*ast.TableName),
+			PartitionNames: $9.([]ast.CIStr),
 			ReplicaKind:    ast.CompactReplicaKindAll,
 		}
 	}
-|	"ALTER" IgnoreOptional "TABLE" TableName "COMPACT" "PARTITION" PartitionNameList "TIFLASH" "REPLICA"
+|	"ALTER" AlterTableOnlineOpt IgnoreOptional "TABLE" IfExists TableName "COMPACT" "PARTITION" PartitionNameList "TIFLASH" "REPLICA"
 	{
 		$$ = &ast.CompactTableStmt{
-			Table:          $4.(*ast.TableName),
-			PartitionNames: $7.([]ast.CIStr),
+			Table:          $6.(*ast.TableName),
+			PartitionNames: $9.([]ast.CIStr),
 			ReplicaKind:    ast.CompactReplicaKindTiFlash,
 		}
 	}
@@ -2563,11 +2612,12 @@ AlterTableSpec:
 			Name:     $4,
 		}
 	}
-|	"DROP" "FOREIGN" "KEY" Symbol
+|	"DROP" "FOREIGN" "KEY" IfExists Symbol
 	{
 		$$ = &ast.AlterTableSpec{
-			Tp:   ast.AlterTableDropForeignKey,
-			Name: $4,
+			IfExists: $4.(bool),
+			Tp:       ast.AlterTableDropForeignKey,
+			Name:     $5,
 		}
 	}
 |	"ORDER" "BY" AlterOrderList %prec lowerThenOrder
@@ -2988,10 +3038,11 @@ Symbol:
  *     [, tbl_name2 TO new_tbl_name2] ...
  *******************************************************************************************/
 RenameTableStmt:
-	"RENAME" "TABLE" TableToTableList
+	"RENAME" "TABLE" IfExists TableToTableList
 	{
 		$$ = &ast.RenameTableStmt{
-			TableToTables: $3.([]*ast.TableToTable),
+			IfExists:      $3.(bool),
+			TableToTables: $4.([]*ast.TableToTable),
 		}
 	}
 
@@ -3006,12 +3057,29 @@ TableToTableList:
 	}
 
 TableToTable:
-	TableName "TO" TableName
+	TableName LockWaitOpt "TO" TableName
 	{
-		$$ = &ast.TableToTable{
+		x := &ast.TableToTable{
 			OldTable: $1.(*ast.TableName),
-			NewTable: $3.(*ast.TableName),
+			NewTable: $4.(*ast.TableName),
 		}
+		if $2 != nil {
+			x.LockWait = $2.(*ast.LockWaitOption)
+		}
+		$$ = x
+	}
+
+LockWaitOpt:
+	{
+		$$ = nil
+	}
+|	"WAIT" NUM
+	{
+		$$ = &ast.LockWaitOption{Wait: getUint64FromNUM($2)}
+	}
+|	"NOWAIT"
+	{
+		$$ = &ast.LockWaitOption{NoWait: true}
 	}
 
 /**************************************RenameUserStmt***************************************
@@ -3856,6 +3924,10 @@ VirtualOrStored:
 	{
 		$$ = true
 	}
+|	"PERSISTENT"
+	{
+		$$ = true
+	}
 
 ColumnOptionList:
 	ColumnOption
@@ -3918,6 +3990,19 @@ ConstraintElem:
 		}
 		$$ = c
 	}
+|	"SPATIAL" KeyOrIndexOpt IndexName '(' IndexPartSpecificationList ')' IndexOptionList
+	{
+		c := &ast.Constraint{
+			Tp:           ast.ConstraintSpatial,
+			Keys:         $5.([]*ast.IndexPartSpecification),
+			Name:         $3.(*ast.NullString).String,
+			IsEmptyIndex: $3.(*ast.NullString).Empty,
+		}
+		if $7 != nil {
+			c.Option = $7.(*ast.IndexOption)
+		}
+		$$ = c
+	}
 |	"FULLTEXT" KeyOrIndexOpt IndexName '(' IndexPartSpecificationList ')' IndexOptionList
 	{
 		c := &ast.Constraint{
@@ -3953,19 +4038,20 @@ ConstraintElem:
 		}
 		$$ = c
 	}
-|	"UNIQUE" KeyOrIndexOpt IndexNameAndTypeOpt '(' IndexPartSpecificationList ')' IndexOptionList
+|	"UNIQUE" KeyOrIndexOpt IfNotExists IndexNameAndTypeOpt '(' IndexPartSpecificationList ')' IndexOptionList
 	{
 		c := &ast.Constraint{
+			IfNotExists:  $3.(bool),
 			Tp:           ast.ConstraintUniq,
-			Keys:         $5.([]*ast.IndexPartSpecification),
-			Name:         $3.([]interface{})[0].(*ast.NullString).String,
-			IsEmptyIndex: $3.([]interface{})[0].(*ast.NullString).Empty,
+			Keys:         $6.([]*ast.IndexPartSpecification),
+			Name:         $4.([]interface{})[0].(*ast.NullString).String,
+			IsEmptyIndex: $4.([]interface{})[0].(*ast.NullString).Empty,
 		}
-		if $7 != nil {
-			c.Option = $7.(*ast.IndexOption)
+		if $8 != nil {
+			c.Option = $8.(*ast.IndexOption)
 		}
 
-		if indexType := $3.([]interface{})[1]; indexType != nil {
+		if indexType := $4.([]interface{})[1]; indexType != nil {
 			if c.Option == nil {
 				c.Option = &ast.IndexOption{}
 			}
@@ -4101,13 +4187,13 @@ ReferOpt:
  *     https://dev.mysql.com/doc/refman/8.0/en/data-type-defaults.html
  */
 DefaultValueExpr:
-	NowSymOptionFractionParentheses
+	NowSymOptionFraction
 |	SignedLiteral
-|	NextValueForSequenceParentheses
-|	BuiltinFunction
-|	'(' SignedLiteral ')'
+|	NextValueForSequence
+|	BuiltinFunctionCall
+|	'(' Expression ')'
 	{
-		$$ = $2
+		$$ = normalizeDefaultValueExpr($2)
 	}
 
 BuiltinFunction:
@@ -4115,7 +4201,10 @@ BuiltinFunction:
 	{
 		$$ = $2.(*ast.FuncCallExpr)
 	}
-|	identifier '(' ')'
+|	BuiltinFunctionCall
+
+BuiltinFunctionCall:
+	identifier '(' ')'
 	{
 		$$ = &ast.FuncCallExpr{
 			FnName: ast.NewCIStr($1),
@@ -4305,37 +4394,39 @@ DropStatisticsStmt:
  *     LOCK [=] {DEFAULT | NONE | SHARED | EXCLUSIVE}
  *******************************************************************************************/
 CreateIndexStmt:
-	"CREATE" IndexKeyTypeOpt "INDEX" IfNotExists Identifier IndexTypeOpt "ON" TableName '(' IndexPartSpecificationList ')' IndexOptionList IndexLockAndAlgorithmOpt
+	"CREATE" OrReplace CreateIndexOnlineOpt IndexKeyTypeOpt "INDEX" IfNotExists Identifier IndexTypeOpt "ON" TableName '(' IndexPartSpecificationList ')' IndexOptionList IndexLockAndAlgorithmOpt
 	{
 		var indexOption *ast.IndexOption
-		if $12 != nil {
-			indexOption = $12.(*ast.IndexOption)
+		if $14 != nil {
+			indexOption = $14.(*ast.IndexOption)
 			if indexOption.Tp == ast.IndexTypeInvalid {
-				if $6 != nil {
-					indexOption.Tp = $6.(ast.IndexType)
+				if $8 != nil {
+					indexOption.Tp = $8.(ast.IndexType)
 				}
 			}
 		} else {
 			indexOption = &ast.IndexOption{}
-			if $6 != nil {
-				indexOption.Tp = $6.(ast.IndexType)
+			if $8 != nil {
+				indexOption.Tp = $8.(ast.IndexType)
 			}
 		}
 		var indexLockAndAlgorithm *ast.IndexLockAndAlgorithm
-		if $13 != nil {
-			indexLockAndAlgorithm = $13.(*ast.IndexLockAndAlgorithm)
+		if $15 != nil {
+			indexLockAndAlgorithm = $15.(*ast.IndexLockAndAlgorithm)
 			if indexLockAndAlgorithm.LockTp == ast.LockTypeDefault && indexLockAndAlgorithm.AlgorithmTp == ast.AlgorithmTypeDefault {
 				indexLockAndAlgorithm = nil
 			}
 		}
 		$$ = &ast.CreateIndexStmt{
-			IfNotExists:             $4.(bool),
-			IndexName:               $5,
-			Table:                   $8.(*ast.TableName),
-			IndexPartSpecifications: $10.([]*ast.IndexPartSpecification),
+			IfNotExists:             $6.(bool),
+			IndexName:               $7,
+			Table:                   $10.(*ast.TableName),
+			IndexPartSpecifications: $12.([]*ast.IndexPartSpecification),
 			IndexOption:             indexOption,
-			KeyType:                 $2.(ast.IndexKeyType),
+			KeyType:                 $4.(ast.IndexKeyType),
 			LockAlg:                 indexLockAndAlgorithm,
+			OrReplace:               $2.(bool),
+			Online:                  $3.(ast.IndexOnlineType),
 		}
 	}
 
@@ -5172,6 +5263,53 @@ CreateViewStmt:
 		}
 		selStmt.SetText(parser.lexer.client, strings.TrimSpace(parser.src[startOffset:endOffset]))
 		$$ = x
+	}
+
+/*******************************************************************
+ *
+ *  ALTER [ALGORITHM = ...] [DEFINER = user] [SQL SECURITY ...]
+ *      VIEW view_name [(column_list)] AS select_statement
+ *      [WITH [CASCADED | LOCAL] CHECK OPTION]
+ *
+ *******************************************************************/
+AlterViewStmt:
+	"ALTER" ViewAlgorithm ViewDefiner ViewSQLSecurity "VIEW" ViewName ViewFieldList "AS" CreateViewSelectOpt ViewCheckOption
+	{
+		startOffset := parser.startOffset(&yyS[yypt-1])
+		endOffset := parser.yylval.offset
+		selStmt := $9.(ast.StmtNode)
+		x := &ast.CreateViewStmt{
+			IsAlter:   true,
+			ViewName:  $6.(*ast.TableName),
+			Select:    selStmt,
+			Algorithm: $2.(ast.ViewAlgorithm),
+			Definer:   $3.(*auth.UserIdentity),
+			Security:  $4.(ast.ViewSecurity),
+		}
+		if $7 != nil {
+			x.Cols = $7.([]ast.CIStr)
+		}
+		if $10 != nil {
+			x.CheckOption = $10.(ast.ViewCheckOption)
+			endOffset = parser.startOffset(&yyS[yypt])
+		} else {
+			x.CheckOption = ast.CheckOptionCascaded
+		}
+		selStmt.SetText(parser.lexer.client, strings.TrimSpace(parser.src[startOffset:endOffset]))
+		$$ = x
+	}
+
+CreateIndexOnlineOpt:
+	{
+		$$ = ast.IndexOnlineDefault
+	}
+|	"ONLINE"
+	{
+		$$ = ast.IndexOnline
+	}
+|	"OFFLINE"
+	{
+		$$ = ast.IndexOffline
 	}
 
 OrReplace:
@@ -6715,6 +6853,15 @@ IfNotExists:
 		$$ = true
 	}
 
+AlterTableOnlineOpt:
+	{
+		$$ = false
+	}
+|	"ONLINE"
+	{
+		$$ = true
+	}
+
 IgnoreOptional:
 	{
 		$$ = false
@@ -6944,6 +7091,29 @@ Identifier:
 
 UnReservedKeyword:
 	"ACTION"
+|	"EMPTY"
+|	"PATH"
+|	"ORDINALITY"
+|	"NESTED"
+|	"JSON_TABLE"
+|	"UNTIL"
+|	"GEOMCOLLECTION"
+|	"GEOMETRYCOLLECTION"
+|	"MULTIPOLYGON"
+|	"MULTILINESTRING"
+|	"MULTIPOINT"
+|	"POLYGON"
+|	"LINESTRING"
+|	"GEOMETRY"
+|	"OFFLINE"
+|	"STRING"
+|	"RETURNS"
+|	"SONAME"
+|	"BEFORE"
+|	"EACH"
+|	"PRECEDES"
+|	"FOLLOWS"
+|	"PERSISTENT"
 |	"ADD_COLUMNAR_REPLICA_ON_DEMAND"
 |	"ADVISE"
 |	"ASCII"
@@ -8324,6 +8494,14 @@ FunctionNameConflict:
 |	"MONTH"
 |	builtinNow
 |	"POINT"
+|	"GEOMETRY"
+|	"LINESTRING"
+|	"POLYGON"
+|	"MULTIPOINT"
+|	"MULTILINESTRING"
+|	"MULTIPOLYGON"
+|	"GEOMETRYCOLLECTION"
+|	"GEOMCOLLECTION"
 |	"QUARTER"
 |	"REPEAT"
 |	"REPLACE"
@@ -8842,6 +9020,14 @@ SumExpr:
 			$$ = &ast.WindowFuncExpr{Name: $1, Args: []ast.ExprNode{$4}, Spec: *($6.(*ast.WindowSpec))}
 		} else {
 			$$ = &ast.AggregateFuncExpr{F: $1, Args: []ast.ExprNode{$4}}
+		}
+	}
+|	"JSON_ARRAYAGG" '(' DistinctKwd Expression ')' OptWindowingClause
+	{
+		if $6 != nil {
+			$$ = &ast.WindowFuncExpr{Name: $1, Args: []ast.ExprNode{$4}, Distinct: true, Spec: *($6.(*ast.WindowSpec))}
+		} else {
+			$$ = &ast.AggregateFuncExpr{F: $1, Args: []ast.ExprNode{$4}, Distinct: true}
 		}
 	}
 |	"JSON_OBJECTAGG" '(' Expression ',' Expression ')' OptWindowingClause
@@ -9479,7 +9665,7 @@ HelpStmt:
 	}
 
 SelectStmtBasic:
-	"SELECT" SelectStmtOpts SelectStmtFieldList HavingClause
+	"SELECT" SelectStmtOpts SelectStmtFieldList SelectStmtIntoVarsOpt HavingClause
 	{
 		st := &ast.SelectStmt{
 			SelectStmtOpts: $2.(*ast.SelectStmtOpts),
@@ -9491,7 +9677,15 @@ SelectStmtBasic:
 			st.TableHints = st.SelectStmtOpts.TableHints
 		}
 		if $4 != nil {
-			st.Having = $4.(*ast.HavingClause)
+			into := $4.(*ast.SelectIntoOption)
+			st.SelectIntoOpt = into
+			lastField := st.Fields.Fields[len(st.Fields.Fields)-1]
+			if lastField.Expr != nil && lastField.AsName.O == "" {
+				lastField.SetText(parser.lexer.client, parser.src[lastField.Offset:parser.endOffset(&yyS[yypt-1])])
+			}
+		}
+		if $5 != nil {
+			st.Having = $5.(*ast.HavingClause)
 		}
 		$$ = st
 	}
@@ -9501,7 +9695,7 @@ SelectStmtFromDualTable:
 	{
 		st := $1.(*ast.SelectStmt)
 		lastField := st.Fields.Fields[len(st.Fields.Fields)-1]
-		if lastField.Expr != nil && lastField.AsName.O == "" {
+		if lastField.Expr != nil && lastField.AsName.O == "" && st.SelectIntoOpt == nil {
 			lastEnd := yyS[yypt-1].offset - 1
 			lastField.SetText(parser.lexer.client, parser.src[lastField.Offset:lastEnd])
 		}
@@ -9516,7 +9710,7 @@ SelectStmtFromTable:
 		st := $1.(*ast.SelectStmt)
 		st.From = $3.(*ast.TableRefsClause)
 		lastField := st.Fields.Fields[len(st.Fields.Fields)-1]
-		if lastField.Expr != nil && lastField.AsName.O == "" {
+		if lastField.Expr != nil && lastField.AsName.O == "" && st.SelectIntoOpt == nil {
 			lastEnd := parser.endOffset(&yyS[yypt-5])
 			lastField.SetText(parser.lexer.client, parser.src[lastField.Offset:lastEnd])
 		}
@@ -10136,6 +10330,102 @@ TableFactor:
 		j.ExplicitParens = true
 		$$ = $2
 	}
+|	JSONTable TableAsName
+	{
+		$$ = &ast.TableSource{Source: $1.(*ast.JSONTable), AsName: $2.(ast.CIStr)}
+	}
+
+JSONTable:
+	"JSON_TABLE" '(' Expression ',' stringLit JSONTableColumns ')'
+	{
+		$$ = &ast.JSONTable{
+			Expr:    $3,
+			Path:    $5,
+			Columns: $6.([]*ast.JSONTableColumn),
+		}
+	}
+
+JSONTableColumns:
+	"COLUMNS" '(' JSONTableColumnList ')'
+	{
+		$$ = $3
+	}
+
+JSONTableColumnList:
+	JSONTableColumn
+	{
+		$$ = []*ast.JSONTableColumn{$1.(*ast.JSONTableColumn)}
+	}
+|	JSONTableColumnList ',' JSONTableColumn
+	{
+		$$ = append($1.([]*ast.JSONTableColumn), $3.(*ast.JSONTableColumn))
+	}
+
+JSONTableColumn:
+	Identifier "FOR" "ORDINALITY"
+	{
+		$$ = &ast.JSONTableColumn{Tp: ast.JSONTableColumnOrdinality, Name: ast.NewCIStr($1)}
+	}
+|	Identifier Type "PATH" stringLit JSONTableOnEmptyOnError
+	{
+		c := &ast.JSONTableColumn{
+			Tp:        ast.JSONTableColumnPath,
+			Name:      ast.NewCIStr($1),
+			FieldType: $2.(*types.FieldType),
+			Path:      $4,
+		}
+		r := $5.([]*ast.JSONTableResponse)
+		c.OnEmpty, c.OnError = r[0], r[1]
+		$$ = c
+	}
+|	Identifier Type "EXISTS" "PATH" stringLit
+	{
+		$$ = &ast.JSONTableColumn{
+			Tp:        ast.JSONTableColumnExists,
+			Name:      ast.NewCIStr($1),
+			FieldType: $2.(*types.FieldType),
+			Path:      $5,
+		}
+	}
+|	"NESTED" "PATH" stringLit JSONTableColumns
+	{
+		$$ = &ast.JSONTableColumn{Tp: ast.JSONTableColumnNested, Path: $3, NestedColumns: $4.([]*ast.JSONTableColumn)}
+	}
+|	"NESTED" stringLit JSONTableColumns
+	{
+		$$ = &ast.JSONTableColumn{Tp: ast.JSONTableColumnNested, Path: $2, NestedColumns: $3.([]*ast.JSONTableColumn)}
+	}
+
+JSONTableOnEmptyOnError:
+	{
+		$$ = []*ast.JSONTableResponse{nil, nil}
+	}
+|	JSONTableResponse "ON" "EMPTY"
+	{
+		$$ = []*ast.JSONTableResponse{$1.(*ast.JSONTableResponse), nil}
+	}
+|	JSONTableResponse "ON" "ERROR"
+	{
+		$$ = []*ast.JSONTableResponse{nil, $1.(*ast.JSONTableResponse)}
+	}
+|	JSONTableResponse "ON" "EMPTY" JSONTableResponse "ON" "ERROR"
+	{
+		$$ = []*ast.JSONTableResponse{$1.(*ast.JSONTableResponse), $4.(*ast.JSONTableResponse)}
+	}
+
+JSONTableResponse:
+	"NULL"
+	{
+		$$ = &ast.JSONTableResponse{Tp: ast.JSONTableResponseNull}
+	}
+|	"ERROR"
+	{
+		$$ = &ast.JSONTableResponse{Tp: ast.JSONTableResponseError}
+	}
+|	"DEFAULT" stringLit
+	{
+		$$ = &ast.JSONTableResponse{Tp: ast.JSONTableResponseDefault, Default: $2}
+	}
 
 PartitionNameListOpt:
 	/* empty */
@@ -10532,9 +10822,49 @@ SelectStmtGroup:
 	}
 |	GroupByClause
 
+SelectStmtIntoVarsOpt:
+	%prec lowerThanInto
+	{
+		$$ = nil
+	}
+|	"INTO" SelectIntoVarList
+	{
+		$$ = &ast.SelectIntoOption{
+			Tp:        ast.SelectIntoVars,
+			Variables: $2.([]ast.ExprNode),
+		}
+	}
+
+SelectIntoVarList:
+	SelectIntoVar
+	{
+		$$ = []ast.ExprNode{$1.(ast.ExprNode)}
+	}
+|	SelectIntoVarList ',' SelectIntoVar
+	{
+		$$ = append($1.([]ast.ExprNode), $3.(ast.ExprNode))
+	}
+
+SelectIntoVar:
+	UserVariable
+	{
+		$$ = $1
+	}
+|	Identifier
+	{
+		$$ = &ast.ColumnNameExpr{Name: &ast.ColumnName{Name: ast.NewCIStr($1)}}
+	}
+
 SelectStmtIntoOption:
 	{
 		$$ = nil
+	}
+|	"INTO" SelectIntoVarList
+	{
+		$$ = &ast.SelectIntoOption{
+			Tp:        ast.SelectIntoVars,
+			Variables: $2.([]ast.ExprNode),
+		}
 	}
 |	"INTO" "OUTFILE" stringLit Fields Lines
 	{
@@ -11148,7 +11478,16 @@ ConfigItemName:
 VariableAssignment:
 	VariableName EqOrAssignmentEq SetExpr
 	{
-		$$ = &ast.VariableAssignment{Name: $1, Value: $3, IsSystem: true}
+		// SET NEW.col = expr or SET OLD.col = expr in a trigger body; any
+		// other name is a system variable, such as plugin.option.
+		if table, col, ok := strings.Cut($1, "."); ok && (strings.EqualFold(table, "NEW") || strings.EqualFold(table, "OLD")) {
+			$$ = &ast.VariableAssignment{
+				Column: &ast.ColumnName{Table: ast.NewCIStr(table), Name: ast.NewCIStr(col)},
+				Value:  $3,
+			}
+		} else {
+			$$ = &ast.VariableAssignment{Name: $1, Value: $3, IsSystem: true}
+		}
 	}
 |	"GLOBAL" VariableName EqOrAssignmentEq SetExpr
 	{
@@ -11230,11 +11569,14 @@ CharsetName:
 	StringName
 	{
 		// Validate input charset name to keep the same behavior as parser of MySQL.
+		// Charsets that are known but not supported for execution (e.g. utf32)
+		// are accepted: GetCharsetInfo returns them together with an error.
 		cs, err := charset.GetCharsetInfo($1)
-		if err != nil {
+		if cs == nil {
 			yylex.AppendError(ErrUnknownCharacterSet.GenWithStackByArgs($1))
 			return 1
 		}
+		_ = err
 		// Use charset name returned from charset.GetCharsetInfo(),
 		// to keep lower case of input for generated column restore.
 		$$ = cs.Name
@@ -12481,6 +12823,7 @@ Statement:
 |	AdminStmt
 |	AlterDatabaseStmt
 |	AlterTableStmt
+|	AlterViewStmt
 |	AlterUserStmt
 |	AlterInstanceStmt
 |	AlterRangeStmt
@@ -12507,6 +12850,8 @@ Statement:
 |	CreateBindingStmt
 |	CreatePolicyStmt
 |	CreateProcedureStmt
+|	CreateTriggerStmt
+|	CreateLoadableFunctionStmt
 |	CreateResourceGroupStmt
 |	AddQueryWatchStmt
 |	CreateSequenceStmt
@@ -12517,6 +12862,7 @@ Statement:
 |	DropIndexStmt
 |	DropTableStmt
 |	DropProcedureStmt
+|	DropTriggerStmt
 |	DropPolicyStmt
 |	DropSequenceStmt
 |	DropViewStmt
@@ -13104,6 +13450,26 @@ Type:
 	NumericType
 |	StringType
 |	DateAndTimeType
+|	SpatialType
+
+SpatialType:
+	SpatialTypeName
+	{
+		tp := types.NewFieldType(mysql.TypeGeometry)
+		tp.SetGeometryType($1)
+		$$ = tp
+	}
+
+SpatialTypeName:
+	"GEOMETRY"
+|	"POINT"
+|	"LINESTRING"
+|	"POLYGON"
+|	"MULTIPOINT"
+|	"MULTILINESTRING"
+|	"MULTIPOLYGON"
+|	"GEOMETRYCOLLECTION"
+|	"GEOMCOLLECTION"
 
 NumericType:
 	IntegerType OptFieldLen FieldOpts
@@ -14753,6 +15119,18 @@ RoleOrPrivElem:
 	{
 		$$ = &ast.RoleOrPriv{
 			Symbols: "SELECT INTO S3",
+		}
+	}
+|	"DELETE" "HISTORY"
+	{
+		$$ = &ast.RoleOrPriv{
+			Symbols: "DELETE HISTORY",
+		}
+	}
+|	"SET" "USER"
+	{
+		$$ = &ast.RoleOrPriv{
+			Symbols: "SET USER",
 		}
 	}
 
@@ -16789,6 +17167,128 @@ CreateProcedureStmt:
 		endOffset := parser.startOffset(&yyS[yypt-1])
 		x.ProcedureParamStr = strings.TrimSpace(parser.src[startOffset:endOffset])
 		$$ = x
+	}
+
+/********************************************************************************************
+ *
+ *  Create Trigger Statement
+ *
+ *  CREATE [OR REPLACE] [DEFINER = user] TRIGGER [IF NOT EXISTS] trigger_name
+ *      {BEFORE | AFTER} {INSERT | UPDATE | DELETE}
+ *      ON tbl_name FOR EACH ROW
+ *      [{FOLLOWS | PRECEDES} other_trigger_name]
+ *      trigger_body
+ *
+ *  The prefix is shared with CREATE VIEW, so ALGORITHM and SQL SECURITY are
+ *  parsed here too and rejected in the action.
+ ********************************************************************************************/
+CreateTriggerStmt:
+	"CREATE" OrReplace ViewAlgorithm ViewDefiner ViewSQLSecurity "TRIGGER" IfNotExists TableName TriggerTiming TriggerEvent "ON" TableName "FOR" "EACH" "ROW" TriggerOrderOpt ProcedureProcStmt
+	{
+		if $3.(ast.ViewAlgorithm) != ast.AlgorithmUndefined || $5.(ast.ViewSecurity) != ast.SecurityDefiner {
+			yylex.AppendError(yylex.Errorf("ALGORITHM and SQL SECURITY are not allowed in CREATE TRIGGER"))
+			return 1
+		}
+		x := &ast.CreateTriggerStmt{
+			OrReplace:   $2.(bool),
+			Definer:     $4.(*auth.UserIdentity),
+			IfNotExists: $7.(bool),
+			TriggerName: $8.(*ast.TableName),
+			Timing:      $9.(ast.TriggerTiming),
+			Event:       $10.(ast.TriggerEvent),
+			Table:       $12.(*ast.TableName),
+			Body:        $17,
+		}
+		if $16 != nil {
+			x.Order = $16.(*ast.TriggerOrder)
+		}
+		startOffset := parser.startOffset(&yyS[yypt])
+		$17.SetText(parser.lexer.client, strings.TrimSpace(parser.src[startOffset:parser.yylval.offset]))
+		$$ = x
+	}
+
+TriggerTiming:
+	"BEFORE"
+	{
+		$$ = ast.TriggerBefore
+	}
+|	"AFTER"
+	{
+		$$ = ast.TriggerAfter
+	}
+
+TriggerEvent:
+	"INSERT"
+	{
+		$$ = ast.TriggerInsert
+	}
+|	"UPDATE"
+	{
+		$$ = ast.TriggerUpdate
+	}
+|	"DELETE"
+	{
+		$$ = ast.TriggerDelete
+	}
+
+TriggerOrderOpt:
+	{
+		$$ = nil
+	}
+|	"FOLLOWS" Identifier
+	{
+		$$ = &ast.TriggerOrder{OtherTrigger: ast.NewCIStr($2)}
+	}
+|	"PRECEDES" Identifier
+	{
+		$$ = &ast.TriggerOrder{Precedes: true, OtherTrigger: ast.NewCIStr($2)}
+	}
+
+/********************************************************************************************
+*  DROP TRIGGER [IF EXISTS] [schema_name.]trigger_name
+********************************************************************************************/
+DropTriggerStmt:
+	"DROP" "TRIGGER" IfExists TableName
+	{
+		$$ = &ast.DropTriggerStmt{
+			IfExists:    $3.(bool),
+			TriggerName: $4.(*ast.TableName),
+		}
+	}
+
+/********************************************************************************************
+ *  CREATE [OR REPLACE] FUNCTION [IF NOT EXISTS] function_name
+ *      RETURNS {STRING | INTEGER | REAL | DECIMAL}
+ *      SONAME shared_library_name
+ ********************************************************************************************/
+CreateLoadableFunctionStmt:
+	"CREATE" OrReplace "FUNCTION" IfNotExists Identifier "RETURNS" LoadableFunctionReturns "SONAME" stringLit
+	{
+		$$ = &ast.CreateLoadableFunctionStmt{
+			OrReplace:    $2.(bool),
+			IfNotExists:  $4.(bool),
+			FunctionName: ast.NewCIStr($5),
+			Returns:      $7.(string),
+			SoName:       $9,
+		}
+	}
+
+LoadableFunctionReturns:
+	"STRING"
+	{
+		$$ = "STRING"
+	}
+|	"INTEGER"
+	{
+		$$ = "INTEGER"
+	}
+|	"REAL"
+	{
+		$$ = "REAL"
+	}
+|	"DECIMAL"
+	{
+		$$ = "DECIMAL"
 	}
 
 /********************************************************************************************

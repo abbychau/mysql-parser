@@ -72,6 +72,9 @@ type FieldType struct {
 	elems            []string
 	elemsIsBinaryLit []bool
 	array            bool
+	// geometryType is the lower-case spatial type name (point, polygon, ...)
+	// of a TypeGeometry field. It is empty for the generic geometry type.
+	geometryType string
 	// Please keep in mind that jsonFieldType should be updated if you add a new field here.
 }
 
@@ -199,6 +202,33 @@ func (ft *FieldType) GetCollate() string {
 // GetElems returns the elements of the FieldType.
 func (ft *FieldType) GetElems() []string {
 	return ft.elems
+}
+
+// GetGeometryType returns the lower-case spatial type name of a geometry
+// field (geometry, point, linestring, polygon, ...). It returns "geometry"
+// for a geometry field without a specific type.
+func (ft *FieldType) GetGeometryType() string {
+	if ft.geometryType == "" {
+		return "geometry"
+	}
+	return ft.geometryType
+}
+
+// SetGeometryType sets the spatial type name of a geometry field.
+func (ft *FieldType) SetGeometryType(name string) {
+	name = strings.ToLower(name)
+	if name == "geometry" {
+		name = ""
+	}
+	ft.geometryType = name
+}
+
+// typeStr returns the type name used when the field type is printed.
+func (ft *FieldType) typeStr() string {
+	if ft.tp == mysql.TypeGeometry && ft.geometryType != "" {
+		return ft.geometryType
+	}
+	return TypeToStr(ft.GetType(), ft.charset)
 }
 
 // SetType sets the type of the FieldType.
@@ -370,6 +400,7 @@ func (ft *FieldType) Equal(other *FieldType) bool {
 		(ignoreDecimal || ft.decimal == other.decimal) &&
 		ft.charset == other.charset &&
 		ft.collate == other.collate &&
+		ft.geometryType == other.geometryType &&
 		flenEqual &&
 		mysql.HasUnsignedFlag(ft.flag) == mysql.HasUnsignedFlag(other.flag)
 	if !partialEqual {
@@ -445,7 +476,7 @@ func (ft *FieldType) Init(tp byte) {
 // CompactStr only considers tp/CharsetBin/flen/Deimal.
 // This is used for showing column type in infoschema.
 func (ft *FieldType) CompactStr() string {
-	ts := TypeToStr(ft.GetType(), ft.charset)
+	ts := ft.typeStr()
 	suffix := ""
 
 	defaultFlen, defaultDecimal := mysql.GetDefaultFieldLengthAndDecimal(ft.GetType())
@@ -553,7 +584,7 @@ func (ft *FieldType) String() string {
 
 // Restore implements Node interface.
 func (ft *FieldType) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord(TypeToStr(ft.GetType(), ft.charset))
+	ctx.WriteKeyWord(ft.typeStr())
 
 	precision := UnspecifiedLength
 	scale := UnspecifiedLength
@@ -726,6 +757,7 @@ type jsonFieldType struct {
 	Elems            []string
 	ElemsIsBinaryLit []bool
 	Array            bool
+	GeometryType     string `json:",omitempty"`
 }
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
@@ -742,6 +774,7 @@ func (ft *FieldType) UnmarshalJSON(data []byte) error {
 		ft.elems = r.Elems
 		ft.elemsIsBinaryLit = r.ElemsIsBinaryLit
 		ft.array = r.Array
+		ft.geometryType = r.GeometryType
 	}
 	return err
 }
@@ -758,6 +791,7 @@ func (ft *FieldType) MarshalJSON() ([]byte, error) {
 	r.Elems = ft.elems
 	r.ElemsIsBinaryLit = ft.elemsIsBinaryLit
 	r.Array = ft.array
+	r.GeometryType = ft.geometryType
 	return json.Marshal(r)
 }
 

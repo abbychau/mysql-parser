@@ -586,11 +586,15 @@ func (n *ColumnOption) Restore(ctx *format.RestoreCtx) error {
 		ctx.WriteKeyWord("AUTO_INCREMENT")
 	case ColumnOptionDefaultValue:
 		ctx.WriteKeyWord("DEFAULT ")
-		printOuterParentheses := false
-		if funcCallExpr, ok := n.Expr.(*FuncCallExpr); ok {
-			if name := funcCallExpr.FnName.L; name != CurrentTimestamp {
-				printOuterParentheses = true
-			}
+		printOuterParentheses := true
+		switch x := n.Expr.(type) {
+		case ValueExpr:
+			printOuterParentheses = false
+		case *UnaryOperationExpr:
+			_, isValue := x.V.(ValueExpr)
+			printOuterParentheses = !isValue
+		case *FuncCallExpr:
+			printOuterParentheses = x.FnName.L != CurrentTimestamp
 		}
 		if printOuterParentheses {
 			ctx.WritePlain("(")
@@ -920,6 +924,8 @@ const (
 	// It will be rewritten into ConstraintColumnar after preprocessor phase.
 	ConstraintVector
 	ConstraintColumnar
+	// ConstraintSpatial is a SPATIAL index.
+	ConstraintSpatial
 )
 
 // Constraint is constraint for table definition.
@@ -968,12 +974,23 @@ func (n *Constraint) Restore(ctx *format.RestoreCtx) error {
 		}
 	case ConstraintUniq:
 		ctx.WriteKeyWord("UNIQUE")
+		if n.IfNotExists {
+			ctx.WriteKeyWord(" IF NOT EXISTS")
+		}
 	case ConstraintUniqKey:
 		ctx.WriteKeyWord("UNIQUE KEY")
+		if n.IfNotExists {
+			ctx.WriteKeyWord(" IF NOT EXISTS")
+		}
 	case ConstraintUniqIndex:
 		ctx.WriteKeyWord("UNIQUE INDEX")
+		if n.IfNotExists {
+			ctx.WriteKeyWord(" IF NOT EXISTS")
+		}
 	case ConstraintFulltext:
 		ctx.WriteKeyWord("FULLTEXT")
+	case ConstraintSpatial:
+		ctx.WriteKeyWord("SPATIAL")
 	case ConstraintCheck:
 		if n.Name != "" {
 			ctx.WriteKeyWord("CONSTRAINT ")
@@ -1534,12 +1551,17 @@ func (n *DropSequenceStmt) Accept(v Visitor) (Node, bool) {
 type RenameTableStmt struct {
 	ddlNode
 
+	// IfExists is the MariaDB RENAME TABLE IF EXISTS extension.
+	IfExists      bool
 	TableToTables []*TableToTable
 }
 
 // Restore implements Node interface.
 func (n *RenameTableStmt) Restore(ctx *format.RestoreCtx) error {
 	ctx.WriteKeyWord("RENAME TABLE ")
+	if n.IfExists {
+		ctx.WriteKeyWord("IF EXISTS ")
+	}
 	for index, table2table := range n.TableToTables {
 		if index != 0 {
 			ctx.WritePlain(", ")
@@ -1575,12 +1597,34 @@ type TableToTable struct {
 	node
 	OldTable *TableName
 	NewTable *TableName
+	// LockWait is the MariaDB WAIT n / NOWAIT option.
+	LockWait *LockWaitOption
+}
+
+// LockWaitOption is the MariaDB lock wait timeout option (WAIT n or NOWAIT)
+// of DDL statements.
+type LockWaitOption struct {
+	Wait   uint64
+	NoWait bool
+}
+
+// Restore writes the option with a leading space.
+func (n *LockWaitOption) Restore(ctx *format.RestoreCtx) {
+	if n.NoWait {
+		ctx.WriteKeyWord(" NOWAIT")
+		return
+	}
+	ctx.WriteKeyWord(" WAIT ")
+	ctx.WritePlainf("%d", n.Wait)
 }
 
 // Restore implements Node interface.
 func (n *TableToTable) Restore(ctx *format.RestoreCtx) error {
 	if err := n.OldTable.Restore(ctx); err != nil {
 		return errors.Annotate(err, "An error occurred while restore TableToTable.OldTable")
+	}
+	if n.LockWait != nil {
+		n.LockWait.Restore(ctx)
 	}
 	ctx.WriteKeyWord(" TO ")
 	if err := n.NewTable.Restore(ctx); err != nil {
@@ -1614,6 +1658,8 @@ func (n *TableToTable) Accept(v Visitor) (Node, bool) {
 type CreateViewStmt struct {
 	ddlNode
 
+	// IsAlter is set for ALTER VIEW, which has the same form without OR REPLACE.
+	IsAlter     bool
 	OrReplace   bool
 	ViewName    *TableName
 	Cols        []CIStr
@@ -1627,8 +1673,12 @@ type CreateViewStmt struct {
 
 // Restore implements Node interface.
 func (n *CreateViewStmt) Restore(ctx *format.RestoreCtx) error {
-	ctx.WriteKeyWord("CREATE ")
-	if n.OrReplace {
+	if n.IsAlter {
+		ctx.WriteKeyWord("ALTER ")
+	} else {
+		ctx.WriteKeyWord("CREATE ")
+	}
+	if n.OrReplace && !n.IsAlter {
 		ctx.WriteKeyWord("OR REPLACE ")
 	}
 	ctx.WriteKeyWord("ALGORITHM")
@@ -1899,12 +1949,25 @@ const (
 
 // CreateIndexStmt is a statement to create an index.
 // See https://dev.mysql.com/doc/refman/5.7/en/create-index.html
+// IndexOnlineType is the MariaDB ONLINE/OFFLINE option of CREATE INDEX.
+type IndexOnlineType int
+
+// IndexOnlineType values.
+const (
+	IndexOnlineDefault IndexOnlineType = iota
+	IndexOnline
+	IndexOffline
+)
+
 type CreateIndexStmt struct {
 	ddlNode
 
 	// only supported by MariaDB 10.0.2+,
 	// see https://mariadb.com/kb/en/library/create-index/
 	IfNotExists bool
+	// OrReplace and Online are MariaDB extensions.
+	OrReplace bool
+	Online    IndexOnlineType
 
 	IndexName               string
 	Table                   *TableName
@@ -1917,6 +1980,15 @@ type CreateIndexStmt struct {
 // Restore implements Node interface.
 func (n *CreateIndexStmt) Restore(ctx *format.RestoreCtx) error {
 	ctx.WriteKeyWord("CREATE ")
+	if n.OrReplace {
+		ctx.WriteKeyWord("OR REPLACE ")
+	}
+	switch n.Online {
+	case IndexOnline:
+		ctx.WriteKeyWord("ONLINE ")
+	case IndexOffline:
+		ctx.WriteKeyWord("OFFLINE ")
+	}
 	switch n.KeyType {
 	case IndexKeyTypeUnique:
 		ctx.WriteKeyWord("UNIQUE ")
@@ -3971,6 +4043,9 @@ type AlterTableStmt struct {
 
 	Table *TableName
 	Specs []*AlterTableSpec
+	// Online and IfExists are MariaDB extensions.
+	Online   bool
+	IfExists bool
 }
 
 func (n *AlterTableStmt) HaveOnlyPlacementOptions() bool {
@@ -3990,7 +4065,14 @@ func (n *AlterTableStmt) Restore(ctx *format.RestoreCtx) error {
 	if ctx.Flags.HasSkipPlacementRuleForRestoreFlag() && n.HaveOnlyPlacementOptions() {
 		return nil
 	}
-	ctx.WriteKeyWord("ALTER TABLE ")
+	ctx.WriteKeyWord("ALTER ")
+	if n.Online {
+		ctx.WriteKeyWord("ONLINE ")
+	}
+	ctx.WriteKeyWord("TABLE ")
+	if n.IfExists {
+		ctx.WriteKeyWord("IF EXISTS ")
+	}
 	if err := n.Table.Restore(ctx); err != nil {
 		return errors.Annotate(err, "An error occurred while restore AlterTableStmt.Table")
 	}

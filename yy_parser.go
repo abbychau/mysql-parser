@@ -460,3 +460,42 @@ func (c CharsetClient) ApplyOn(p *Parser) error {
 	p.lexer.client = charset.FindEncoding(string(c))
 	return nil
 }
+
+// normalizeDefaultValueExpr converts a parenthesized DEFAULT expression into
+// the form the more specific default value rules produce: the parentheses are
+// removed and the synonyms of CURRENT_TIMESTAMP and CURRENT_DATE are replaced
+// by those names, so DEFAULT (NOW()) and DEFAULT NOW() parse the same way.
+func normalizeDefaultValueExpr(expr ast.ExprNode) ast.ExprNode {
+	for {
+		p, ok := expr.(*ast.ParenthesesExpr)
+		if !ok {
+			break
+		}
+		expr = p.Expr
+	}
+	fn, ok := expr.(*ast.FuncCallExpr)
+	if !ok {
+		return expr
+	}
+	switch fn.FnName.L {
+	case ast.CurrentTimestamp, ast.Now, "localtime", "localtimestamp":
+		if len(fn.Args) <= 1 {
+			fn.FnName = ast.NewCIStr("CURRENT_TIMESTAMP")
+			if len(fn.Args) == 0 {
+				fn.Args = nil
+			}
+		}
+	case ast.CurrentDate, ast.Curdate:
+		if len(fn.Args) == 0 {
+			fn.FnName = ast.NewCIStr("CURRENT_DATE")
+			fn.Args = nil
+		}
+	case ast.NextVal:
+		if len(fn.Args) == 1 {
+			if col, ok := fn.Args[0].(*ast.ColumnNameExpr); ok && col.Name.Schema.L == "" {
+				fn.Args[0] = &ast.TableNameExpr{Name: &ast.TableName{Schema: col.Name.Table, Name: col.Name.Name}}
+			}
+		}
+	}
+	return fn
+}

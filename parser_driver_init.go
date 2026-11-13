@@ -14,6 +14,11 @@ import (
 func init() {
 	// Register the parser driver functions with the AST
 	ast.NewValueExpr = func(value interface{}, charset string, collate string) ast.ValueExpr {
+		// A value that is already a value expression (e.g. a Literal used as
+		// a SignedLiteral) is returned as is instead of being wrapped again.
+		if ve, ok := value.(ast.ValueExpr); ok {
+			return ve
+		}
 		// Create using the parser_driver but return as ast.ValueExpr interface
 		ve := parser_driver.NewValueExpr(value, charset, collate)
 		if pvExpr, ok := ve.(*parser_driver.ValueExpr); ok {
